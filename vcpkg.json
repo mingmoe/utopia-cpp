@@ -1,0 +1,27 @@
+{
+    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+    "name": "utopia",
+    "description": "The game utopia",
+    "version-string": "see-cmake-file",
+    "dependencies": [
+        "boost-stacktrace",
+        "boost-asio",
+        "gtest",
+        "sdl2",
+        "sdl2-mixer",
+        "sdl2-image",
+        "sdl2-gfx",
+        "utf8h",
+        "icu",
+        {
+            "name": "freetype",
+            "default-features": false,
+            "features": [ "brotli", "png", "bzip2", "zlib" ]
+        },
+        {
+            "name": "harfbuzz",
+            "default-features": false,
+            "features": [ "icu" ]
+        }
+    ]
+}
