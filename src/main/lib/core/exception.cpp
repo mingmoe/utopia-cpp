@@ -57,14 +57,7 @@ string Exception::getMsg() const {
     std::ostringstream buf;
 
     // 输出异常信息
-    buf << "utopia exception";
-
-    if(this->valid_) {
-        buf << ":";
-    }
-    else {
-        buf << "(may contain invalid characters):";
-    }
+    buf << "utopia exception:";
 
     buf << this->msg_->c_str() << "\n";
 

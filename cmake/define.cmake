@@ -25,5 +25,5 @@ set(U_PROJECT_TEST "${U_PROJECT}_test")
 # 服务器项目
 set(U_PROJECT_SERVER "${U_PROJECT}_server")
 
-# 第三方模块目录
+# 第三方模块目录(vcpkg)
 set(U_LIBRARY_DIR "${CMAKE_SOURCE_DIR}/utopia-library")

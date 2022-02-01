@@ -11,7 +11,6 @@
         "sdl2-mixer",
         "sdl2-image",
         "sdl2-gfx",
-        "utf8h",
         "icu",
         {
             "name": "freetype",
@@ -22,6 +21,21 @@
             "name": "harfbuzz",
             "default-features": false,
             "features": [ "icu" ]
+        }
+    ],
+    "builtin-baseline": "07e508359ca5488456988191d8709722484daccd",
+    "overrides": [
+        {
+            "name": "boost-backtrace",
+            "version": "1.78.0"
+        },
+        {
+            "name": "boost-asio",
+            "version": "1.78.0"
+        },
+        {
+            "name": "sdl2",
+            "version": "2.0.20"
         }
     ]
 }

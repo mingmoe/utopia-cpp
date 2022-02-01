@@ -5,4 +5,6 @@
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/main")
+
+# note:test depends on main
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/test")

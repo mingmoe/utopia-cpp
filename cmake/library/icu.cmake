@@ -4,10 +4,11 @@
 # Copyright (c) 2020-2022 moe-org All rights reserved.
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-find_path(UTF8H_INCLUDE_DIRS "utf8h/utf8.h" PARENT_SCOPE)
+find_package(ICU REQUIRED COMPONENTS io)
 
-function(u_add_utf8_library)
-    target_include_directories(${ARGV} PRIVATE ${UTF8H_INCLUDE_DIRS})
-endfunction(u_add_utf8_library)
+function(u_add_icu_library)
+    target_include_directories(${ARGV} PRIVATE ICU ICU::io)
+endfunction(u_add_icu_library)
 
-message(STATUS "add library by u_add_utf8_library")
+list(APPEND U_3RD_LIBRARY_FUNCTION_LIST "u_add_icu_library | ${CMAKE_CURRENT_LIST_FILE}")
+

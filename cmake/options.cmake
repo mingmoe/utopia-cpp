@@ -12,20 +12,24 @@ if(NOT DEFINED UTOPIA_PUBLIC_CLANG_TIDY_PATH)
     set(UTOPIA_PUBLIC_CLANG_TIDY_PATH "clang-tidy")
 endif()
 
-message(STATUS 
-"using variable UTOPIA_PUBLIC_CLANG_TIDY_PATH(=${UTOPIA_PUBLIC_CLANG_TIDY_PATH}) as clang-tidy path")
-
-
 function(u_open_clang_tidy)
-    set(CMAKE_CXX_CLANG_TIDY 
-    ${UTOPIA_PUBLIC_CLANG_TIDY_PATH}
-    --use-color
-    )
+    if(DEFINED UTOPIA_PUBLIC_ENABLE_CLANG_TIDY)
+        set(CMAKE_CXX_CLANG_TIDY 
+        ${UTOPIA_PUBLIC_CLANG_TIDY_PATH}
+        --use-color
+        )
+        set(CMAKE_CXX_CLANG_TIDY ${CMAKE_CXX_CLANG_TIDY} PARENT_SCOPE)
+    endif()
 endfunction(u_open_clang_tidy)
 
 function(u_close_clang_tidy)
-    set(CMAKE_CXX_CLANG_TIDY "")
+    if(DEFINED CMAKE_CXX_CLANG_TIDY)
+        unset(CMAKE_CXX_CLANG_TIDY)
+        unset(CMAKE_CXX_CLANG_TIDY PARENT_SCOPE)
+    endif()
 endfunction(u_close_clang_tidy)
+
+u_close_clang_tidy()
 
 # 设置编译选项
 if(MSVC) # for msvc

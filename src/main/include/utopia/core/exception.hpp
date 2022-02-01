@@ -83,14 +83,6 @@ namespace utopia {
             }
 
             /**
-			 * @brief		检查原始信息是否是有效的UTF-8字符串
-			 * @return		如果有效返回true，否则false
-			*/
-            inline virtual bool isValidOriginMsg() const noexcept {
-                return this->valid_;
-            }
-
-            /**
 			 * @brief	获取异常信息字符串
 			 * @return	获取异常信息字符串。注:此函数返回的不等价于构造此函数所使用的字符串。
 			*/
@@ -108,9 +100,6 @@ namespace utopia {
             virtual const char *what() const noexcept override;
           private:
             // 这些数据不应该在构造函数之外修改
-
-            bool valid_{ true };   // msg string is valid
-
             std::unique_ptr<std::string> msg_{
                 nullptr
             };   // utf-8信息字符串，非空

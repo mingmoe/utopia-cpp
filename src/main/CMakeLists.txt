@@ -24,8 +24,8 @@ set(U_MAIN_INCLUDE_DIR "${U_MAIN_INCLUDE_DIR}" PARENT_SCOPE)
 
 message(STATUS "utopia include directory:${U_MAIN_INCLUDE_DIR}")
 
+# 这些依赖将会给client,server和test一起使用
 function(u_add_standard_options)
-    u_add_utf8_library(${ARGV})
     u_add_boost_library(${ARGV})
     u_include_configure_header(${ARGV})
     target_include_directories(
