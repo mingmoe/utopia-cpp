@@ -4,7 +4,11 @@
 # Copyright (c) 2020-2022 moe-org All rights reserved.
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-set(U_CLIENT_MAIN_SOURCE_FILE )
+set(U_CLIENT_MAIN_SOURCE_FILE 
+)
+set(U_CLIENT_HEADER_FILE
+    "${U_MAIN_INCLUDE_DIR}/utopia/client/text/source.hpp"
+)
 
 add_executable(
     ${U_PROJECT}
@@ -12,6 +16,7 @@ add_executable(
     ${U_MAIN_SOURCE_FILE_WITHOUT_MAIN}
     ${U_MAIN_SOURCE_HEADER_FILE}
     ${U_CLIENT_MAIN_SOURCE_FILE}
+    ${U_CLIENT_HEADER_FILE}
 )
 
 u_add_standard_options(${U_PROJECT})

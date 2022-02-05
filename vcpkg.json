@@ -11,6 +11,7 @@
         "sdl2-mixer",
         "sdl2-image",
         "sdl2-gfx",
+        "fmt",
         "icu",
         {
             "name": "freetype",

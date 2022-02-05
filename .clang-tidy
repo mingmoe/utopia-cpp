@@ -12,9 +12,9 @@ Checks: >-
   cppcoreguidelines-*,
   google-explicit-constructor,
   llvm-namespace-comment,
-  llvm-header-guard,
   -modernize-use-auto,
-  -cppcoreguidelines-pro-type-reinterpret-cast
+  -modernize-use-trailing-return-type,
+  -readability-avoid-const-params-in-decls
 
 WarningsAsErrors: '*'
 HeaderFilterRegex: '^(<)|(")|()utopia/'

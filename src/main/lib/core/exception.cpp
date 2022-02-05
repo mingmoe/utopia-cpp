@@ -16,7 +16,6 @@
 #include <utopia/core/exception.hpp>
 
 #include <boost/stacktrace.hpp>
-#include <utf8h/utf8.h>
 
 using namespace std;
 using namespace utopia::core;
@@ -29,7 +28,7 @@ Exception::Exception(string_view    msg,
 Exception::Exception(const char8_t *msg,
                      const uint64_t line,
                      const char    *file) noexcept :
-    Exception(reinterpret_cast<const char *>(msg), line, file) {}
+    Exception(reinterpret_cast<const char *>(msg), line, file) {} // NOLINT
 
 Exception::Exception(const char    *msg,
                      const uint64_t line,
@@ -40,8 +39,6 @@ Exception::Exception(const char    *msg,
     }
 
     this->msg_ = std::make_unique<std::string>(msg);
-
-    valid_ = utf8valid(reinterpret_cast<const void *>(msg)) == nullptr;
 
     // check file and line number
     if(file != nullptr) {
@@ -57,8 +54,7 @@ string Exception::getMsg() const {
     std::ostringstream buf;
 
     // 输出异常信息
-    buf << "utopia exception:";
-
+    buf << this->getExceptionName() << ":";
     buf << this->msg_->c_str() << "\n";
 
     // 输出可选的上下文信息
@@ -68,9 +64,9 @@ string Exception::getMsg() const {
     }
 
     // 打印堆栈
-    buf << "===== utopia::Exception stack trace begin =====\n";
+    buf << "===== exception stack trace begin =====\n";
     buf << boost::stacktrace::to_string(this->stack_trace_);
-    buf << "=====  utopia::Exception stack trace end  =====\n";
+    buf << "=====  exception stack trace end  =====\n";
 
     return buf.str();
 }

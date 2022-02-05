@@ -4,17 +4,17 @@
 #
 # 环境检查
 #
-# Copyright (c) 2020-2022 moe-org All rights reserved.
-#* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
+# 同时会设置三个变量
+# U_USE_(GCC|CLANG|MSVC)
+# 如果使用不支持的编译器，默认U_USE_CLANG
+# 
 # 标准编译套件:
 # msvc >= 19.30.0
 # gcc >= 11.0.0
 # clang >= 13.0.0
-
-# 同时会设置三个变量
-# U_USE_(GCC|CLANG|MSVC)
-# 如果使用不支持的编译器，默认U_USE_CLANG
+#
+# Copyright (c) 2020-2022 moe-org All rights reserved.
+#* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 	if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "11.0.0")

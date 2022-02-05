@@ -9,12 +9,12 @@
 
 include(FetchContent)
 
-if(DEFINED UTOPIA_PUBLIC_VCPKG_SOURCE_CN)
+if("${UTOPIA_PUBLIC_VCPKG_SOURCE_CN}" STREQUAL ON)
     set(X_VCPKG_ASSET_SOURCES "x-azurl,http://106.15.181.5/")
     set(ENV{X_VCPKG_ASSET_SOURCES} "x-azurl,http://106.15.181.5/")
 endif()
 
-if(DEFINED UTOPIA_PUBLIC_VCPKG_CLONE_CN)
+if("${UTOPIA_PUBLIC_VCPKG_CLONE_CN}" STREQUAL ON)
     set(U_VCPKG_SOURCE "https://gitee.com/ming-moe/vcpkg")
 else()
     set(U_VCPKG_SOURCE "https://github.com/microsoft/vcpkg")

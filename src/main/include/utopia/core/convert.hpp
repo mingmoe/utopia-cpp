@@ -10,112 +10,101 @@
 /// 所有适合的类型转换应该使用这个文件定义的内容。
 //===--------------------------------------------------------===//
 
-#ifndef _UTOPIA_CORE_CONVERT_HPP_
-#define _UTOPIA_CORE_CONVERT_HPP_
+#ifndef UTOPIA_CORE_CONVERT_HPP
+#define UTOPIA_CORE_CONVERT_HPP
 
-#include <assert.h>
+#include <cassert>
 #include <concepts>
+#include <cstdint>
 #include <limits>
-#include <stdint.h>
 #include <type_traits>
 
 #include <utopia/core/assert.hpp>
 #include <utopia/core/exception.hpp>
 
-namespace utopia {
-    namespace core {
+namespace utopia::core {
 
-        /// @brief      安全的无符号数到有符号数之间的转换。
-        /// @param input 输入
-        /// @param output 输出。如果转换失败则不赋值。
-        /// @return     转换成功返回true，否则返回false。
-        template<std::signed_integral TO, std::unsigned_integral FROM>
-        constexpr inline bool safeSignCast(FROM input, TO &output) {
-            const constexpr auto outputMax =
-                static_cast<uintmax_t>(std::numeric_limits<TO>::max());
+    /// @brief      安全的无符号数到有符号数之间的转换。
+    /// @param input 输入
+    /// @param output 输出。如果转换失败则不赋值。
+    /// @return     转换成功返回true，否则返回false。
+    template<std::signed_integral TO, std::unsigned_integral FROM>
+    constexpr inline bool safeSignCast(FROM input, TO &output) {
+        const constexpr auto outputMax =
+            static_cast<uintmax_t>(std::numeric_limits<TO>::max());
 
-            const auto uinput = static_cast<uintmax_t>(input);
+        const auto uinput = static_cast<uintmax_t>(input);
 
-            if(uinput > outputMax) {
+        if(uinput > outputMax) {
+            return false;
+        }
+        output = static_cast<TO>(uinput);
+        return true;
+    }
+
+    /// @brief      安全的有符号数到无符号数之间的转换。
+    /// @param input 输入
+    /// @param output 输出。如果转换失败则不赋值。
+    /// @return     转换成功返回true，否则返回false。
+    template<std::unsigned_integral TO, std::signed_integral FROM>
+    constexpr inline bool safeSignCast(FROM input, TO &output) {
+        if(input < 0) {
+            return false;
+        }
+        return safeNumberCast<TO, uintmax_t>(static_cast<uintmax_t>(input),
+                                             output);
+    }
+
+    /// @brief      安全整数转换。只支持相同的符号。
+    /// @param from 输入
+    /// @param to    输出。如果转换失败则不操作。
+    /// @return     如果转换成功则返回true，否则返回false。
+    template<std::integral TO, std::integral FROM>
+    constexpr inline bool safeNumberCast(FROM input, TO &output) {
+        static_assert(
+            std::numeric_limits<TO>::is_signed ==
+                std::numeric_limits<FROM>::is_signed,
+            "safeNumberCast只允许相同的符号进行转换！请使用safeSignCast进行不同符号的转换。");
+
+        if(std::numeric_limits<TO>::is_signed) {
+            if(static_cast<intmax_t>(input) > std::numeric_limits<TO>::max() ||
+               static_cast<intmax_t>(input) < std::numeric_limits<TO>::min()) {
                 return false;
             }
-            else {
-                output = static_cast<TO>(uinput);
-                return true;
-            }
         }
-
-        /// @brief      安全的有符号数到无符号数之间的转换。
-        /// @param input 输入
-        /// @param output 输出。如果转换失败则不赋值。
-        /// @return     转换成功返回true，否则返回false。
-        template<std::unsigned_integral TO, std::signed_integral FROM>
-        constexpr inline bool safeSignCast(FROM input, TO &output) {
-            if(input < 0) {
+        else {
+            if(static_cast<uintmax_t>(input) > std::numeric_limits<TO>::max() ||
+               static_cast<uintmax_t>(input) < std::numeric_limits<TO>::min()) {
                 return false;
             }
-            return safeNumberCast<TO,uintmax_t>(static_cast<uintmax_t>(input),output);
         }
 
-        /// @brief      安全整数转换。只支持相同的符号。
-        /// @param from 输入
-        /// @param to    输出。如果转换失败则不操作。
-        /// @return     如果转换成功则返回true，否则返回false。
-        template<std::integral TO, std::integral FROM>
-        constexpr inline bool safeNumberCast(FROM input,TO& output) {
-            static_assert(std::numeric_limits<TO>::is_signed ==
-                              std::numeric_limits<FROM>::is_signed,
-                          "safeNumberCast只允许相同的符号进行转换！请使用safeSignCast进行不同符号的转换。");
+        output = static_cast<TO>(input);
+        return true;
+    }
 
-            if(std::numeric_limits<TO>::is_signed) {
-                if(static_cast<intmax_t>(input) >
-                       std::numeric_limits<TO>::max() ||
-                   static_cast<intmax_t>(input) <
-                       std::numeric_limits<TO>::min()) {
-                    return false;
-                }
+    /// @brief          安全的整数转换。转换失败则退出程序。输入和输出可以拥有任意符号。
+    /// @param input    输入
+    /// @return         输出
+    template<std::integral TO, std::integral FROM>
+    constexpr inline TO safeConvert(FROM input) {
+        if constexpr(std::numeric_limits<TO>::is_signed ==
+                     std::numeric_limits<FROM>::is_signed) {
+            TO output = 0;
+            if(safeNumberCast<TO, FROM>(input, output)) {
+                return output;
             }
-            else {
-                if(static_cast<uintmax_t>(input) >
-                       std::numeric_limits<TO>::max() ||
-                   static_cast<uintmax_t>(input) <
-                       std::numeric_limits<TO>::min()) {
-                    return false;
-                }
-            }
-
-            output = static_cast<TO>(input);
-            return true;
+            utopia::core::failed("number convert failed down:out of range!");
         }
-
-        /// @brief          安全的整数转换。转换失败则退出程序。输入和输出可以拥有任意符号。
-        /// @param input    输入
-        /// @return         输出
-        template<std::integral TO,std::integral FROM>
-        constexpr inline TO safeConvert(FROM input) {
-            if constexpr(std::numeric_limits<TO>::is_signed ==
-               std::numeric_limits<FROM>::is_signed) {
-                 TO output = 0;
-                if(safeNumberCast<TO, FROM>(input, output)) {
-                     return output;
-                }
-                else {
-                    UTOPIA_FAILED("number convert failed down:out of range!");
-                }
+        else {
+            TO output = 0;
+            if(safeSignCast<TO, FROM>(input, output)) {
+                return output;
             }
-            else {
-                TO output = 0;
-                if(safeSignCast<TO,FROM>(input, output)) {
-                    return output;
-                }
-                else {
-                    UTOPIA_FAILED("number convert failed down:out of range!");
-                }
-            }
+            utopia::core::failed("number convert failed down:out of range!");
         }
+    }
 
-    }   // namespace core
-}   // namespace utopia
-
+}   // namespace utopia::core
 
 #endif

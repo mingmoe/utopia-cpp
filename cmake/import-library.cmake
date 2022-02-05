@@ -13,7 +13,7 @@ set(U_3RD_LIBRARY_FUNCTION_LIST "")
 # 引入第三方库
 file(GLOB_RECURSE U_3RD_LIBRARY_CMAKE_LIST "${U_CMAKE_MODULE_DIR}/library/*")
 foreach(LIB_CMAKE IN LISTS U_3RD_LIBRARY_CMAKE_LIST)
-    message(STATUS "found 3rd library support:${LIB_CMAKE}")
+    message(STATUS "load 3rd library support:${LIB_CMAKE}")
     include(${LIB_CMAKE})
 endforeach()
 

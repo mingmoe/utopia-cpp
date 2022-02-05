@@ -6,6 +6,12 @@
 
 u_open_clang_tidy()
 
+set(U_MAIN_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
+set(U_MAIN_INCLUDE_DIR "${U_MAIN_INCLUDE_DIR}" PARENT_SCOPE)
+
+message(STATUS "utopia include directory:${U_MAIN_INCLUDE_DIR}")
+
+# 设置核心源文件。这些源文件同时被server和client使用
 set(
     U_MAIN_SOURCE_FILE_WITHOUT_MAIN
     "${CMAKE_CURRENT_SOURCE_DIR}/lib/core/exception.cpp"
@@ -14,17 +20,13 @@ set(
 
 set(
     U_MAIN_SOURCE_HEADER_FILE
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/utopia/core/exception.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/utopia/core/convert.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/utopia/core/assert.hpp"
+    "${U_MAIN_INCLUDE_DIR}/utopia/core/exception.hpp"
+    "${U_MAIN_INCLUDE_DIR}/utopia/core/convert.hpp"
+    "${U_MAIN_INCLUDE_DIR}/utopia/core/assert.hpp"
+    "${U_MAIN_INCLUDE_DIR}/utopia/core/buffer.hpp"
 )
 
-set(U_MAIN_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
-set(U_MAIN_INCLUDE_DIR "${U_MAIN_INCLUDE_DIR}" PARENT_SCOPE)
-
-message(STATUS "utopia include directory:${U_MAIN_INCLUDE_DIR}")
-
-# 这些依赖将会给client,server和test一起使用
+# 这些选项将会给client,server和test一起使用
 function(u_add_standard_options)
     u_add_boost_library(${ARGV})
     u_include_configure_header(${ARGV})
@@ -35,5 +37,6 @@ function(u_add_standard_options)
     )
 endfunction(u_add_standard_options)
 
+# 添加子项目
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/client")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/server")
