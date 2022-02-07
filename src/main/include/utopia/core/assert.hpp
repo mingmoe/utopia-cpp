@@ -23,7 +23,7 @@ namespace utopia::core {
     /// @param condition 如果为false，则打印调试信息并退出。
     /// @param reason 如果condition为false，则输出此条信息（作为调试信息的一部分）。
     /// 设置为nullptr则不输出。
-    void uassert(bool condition, std::string_view reason);
+    void u_assert(bool condition, std::string_view reason);
 
     /// @brief          快速失败。等价于void uassert(false, std::string_view);
     /// @param reason   失败的原因。

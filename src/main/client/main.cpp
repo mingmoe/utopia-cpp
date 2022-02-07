@@ -23,6 +23,7 @@
 /// @return 程序返回值。如果正常退出返回0，否则返回非0值；
 int main(int /*argc*/, char * /*argv*/[]) {
 
+    utopia::client::text::FileFontSource f{ "" };
 
     return 0;
 }

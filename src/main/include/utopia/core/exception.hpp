@@ -20,6 +20,7 @@
 #include <exception>
 #include <fmt/core.h>
 #include <memory>
+#include <source_location>
 #include <string>
 #include <string_view>
 
@@ -34,35 +35,13 @@ namespace utopia::core {
 		*/
     class Exception : public std::exception {
       public:
-        /**
-			* @brief	构造一个包含调用信息的异常
-			 * @param msg 不为null的字符串
-			 * @param line 行号，如果为0则视为未知行号
-			 * @Param file 文件名称，如果为null则视为未知文件
-			*/
-        Exception(std::string_view msg,
-                  const uint64_t   line,
-                  const char      *file) noexcept;
 
-        /**
-			* @brief	构造一个包含调用信息的异常
-			 * @param msg 不为null的字符串
-			 * @param line 行号，如果为0则视为未知行号
-			 * @Param file 文件名称，如果为null则视为未知文件
-			*/
-        Exception(const char8_t *msg,
-                  const uint64_t line,
-                  const char    *file) noexcept;
-
-        /**
-			* @brief	构造一个包含调用信息的异常
-			 * @param msg 不为null的字符串
-			 * @param line 行号，如果为0则视为未知行号
-			 * @Param file 文件名称，如果为null则视为未知文件
-			*/
-        Exception(const char    *msg,
-                  const uint64_t line,
-                  const char    *file) noexcept;
+        /// @brief 构造一个异常
+        /// @param msg 异常信息
+        /// @param local 构造异常的源代码位置
+        Exception(const char                 *msg,
+                  const std::source_location &local =
+                      std::source_location::current());
 
         // define some default functions
         Exception(const Exception &) = delete;
@@ -73,41 +52,37 @@ namespace utopia::core {
 
         /// @brief  获取异常名称
         /// @return 异常的名称
-        [[nodiscard]] inline virtual std::string
-            getExceptionName() const noexcept {
+        [[nodiscard]] inline virtual std::string get_name() const noexcept {
             return std::string{ "UtopiaException" };
         }
 
-        /**
-			 * @brief 获取原始信息(即构造函数的msg参数)
-			 * @return 原始信息的复制
-			*/
-        [[nodiscard]] inline virtual std::string getOriginMsg() const noexcept {
-            return std::string{ *this->msg_ };
+
+        /// @brief 获取原始信息(即构造函数的msg参数)
+        /// @return 原始信息的复制
+        [[nodiscard]] inline virtual std::string
+            get_origin_msg() const noexcept {
+            return std::string{ this->msg_ };
         }
 
-        /**
-			 * @brief	获取异常信息字符串
-			 * @return	获取异常信息字符串。注:此函数返回的不等价于构造此函数所使用的字符串。
-			*/
-        [[nodiscard]] virtual std::string getMsg() const;
+        /// @brief	获取异常信息字符串
+        /// @return	获取异常信息字符串。注:此函数返回的不等价于构造此函数所使用的字符串。
+        [[nodiscard]] virtual std::string get_msg() const;
 
-        /**
-			 * @brief			输出到流
-			 * @param output	要输出的流
-			*/
-        virtual void printTo(std::ostream &output) const;
+        /// @brief			输出异常信息到流
+        /// @param output	要输出的流
+        virtual void print_to(std::ostream &output) const;
 
-        /**
-			 * @brief  return value same as GetOriginMsg().data();
-			*/
+
+        /// @brief  return value same as get_origin_msg().data();
         [[nodiscard]] const char *what() const noexcept override;
-      private:
-        // 这些数据不应该在构造函数之外修改
-        std::unique_ptr<std::string> msg_{ nullptr };   // utf-8信息字符串，非空
-        std::unique_ptr<std::string> file_{ nullptr };   // 文件名称，可空
 
-        uint64_t line_{ 0 };   // 行号，为0则视为未知行号
+      private:
+
+        // 这些数据不应该在构造函数之外修改
+        std::string msg_{ nullptr };    // utf-8信息字符串，非空
+        std::string file_{ nullptr };   // 文件名称，可空
+
+        uint64_t    line_{ 0 };   // 行号，为0则视为未知行号
 
         boost::stacktrace::stacktrace stack_trace_{};   // 构造时的堆栈追踪
     };
@@ -119,21 +94,14 @@ namespace utopia::core {
 #define DEFINED_UTOPIA_EXCEPTION(exceptionName)                                \
     class exceptionName##Exception : public Exception {                        \
       public:                                                                  \
-        exceptionName##Exception(std::string_view msg,                         \
-                                 const uint64_t   line,                        \
-                                 const char      *file) noexcept :                  \
-            Exception(msg, line, file) {}                                      \
-        exceptionName##Exception(const char8_t *msg,                           \
-                                 const uint64_t line,                          \
-                                 const char    *file) noexcept :                  \
-            Exception(msg, line, file) {}                                      \
-        exceptionName##Exception(const char    *msg,                           \
-                                 const uint64_t line,                          \
-                                 const char    *file) noexcept :                  \
-            Exception(msg, line, file) {}                                      \
                                                                                \
-        inline virtual std::string                                             \
-            getExceptionName() const noexcept override {                       \
+        exceptionName##Exception(const char                 *msg,              \
+                                 const std::source_location &local =           \
+                                     std::source_location::current()) noexcept \
+            :                                                                  \
+            Exception(msg, local) {}                                           \
+                                                                               \
+        inline virtual std::string get_name() const noexcept override {        \
             return std::string{ #exceptionName "Exception" };                  \
         }                                                                      \
     }
@@ -146,22 +114,9 @@ namespace utopia::core {
     // NOLINTNEXTLINE
     DEFINED_UTOPIA_EXCEPTION(IO);
 
+    // NOLINTEND(*-macro-*)
 
 #undef DEFINED_UTOPIA_EXCEPTION
-
-// 用于抛出异常
-// NOLINTNEXTLINE
-#define BUILD_UTOPIA_EXCEPTION(msg, ex)                                        \
-    utopia::core::ex(msg, __LINE__, __FILE__)
-// NOLINTNEXTLINE
-#define THROW_UTOPIA_EXCEPTION(msg, ex) throw BUILD_UTOPIA_EXCEPTION(msg, ex)
-
-// 用于抛出系统异常
-// NOLINTNEXTLINE
-#define THROW_UTOPIA_EXCEPTION_FROM_ERRNO(ex)                                  \
-    THROW_UTOPIA_EXCEPTION(                                                    \
-        fmt::format("from errno(code:{}):{}", errno, std::strerror(errno)),    \
-        ex)
 
 }   // namespace utopia::core
 

@@ -20,48 +20,30 @@
 using namespace std;
 using namespace utopia::core;
 
-Exception::Exception(string_view    msg,
-                     const uint64_t line,
-                     const char    *file) noexcept :
-    Exception(msg.data(), line, file) {}
-
-Exception::Exception(const char8_t *msg,
-                     const uint64_t line,
-                     const char    *file) noexcept :
-    Exception(reinterpret_cast<const char *>(msg), line, file) {} // NOLINT
-
-Exception::Exception(const char    *msg,
-                     const uint64_t line,
-                     const char    *file) noexcept {
+Exception::Exception(const char                 *msg,
+                     const std::source_location &local) noexcept :
+    line_(local.line()),
+    file_(local.file_name()) {
     // 检查信息字符串
     if(msg == nullptr) {
         msg = "unknown reason";
     }
 
-    this->msg_ = std::make_unique<std::string>(msg);
-
-    // check file and line number
-    if(file != nullptr) {
-        file_ = std::make_unique<std::string>(file);
-    }
-
-    line_              = line;
+    this->msg_         = std::string{ msg };
 
     this->stack_trace_ = boost::stacktrace::stacktrace();
 }
 
-string Exception::getMsg() const {
+string Exception::get_msg() const {
     std::ostringstream buf;
 
     // 输出异常信息
-    buf << this->getExceptionName() << ":";
-    buf << this->msg_->c_str() << "\n";
+    buf << this->get_name() << ":";
+    buf << this->msg_.c_str() << "\n";
 
-    // 输出可选的上下文信息
-    if(file_ != nullptr) {
-        buf << "at " << file_->c_str() << ":"
-            << (line_ != 0 ? std::to_string(line_) : "unknown") << "\n";
-    }
+    // 输出上下文信息
+    buf << "at " << file_.c_str() << ":"
+        << (line_ != 0 ? std::to_string(line_) : "unknown") << "\n";
 
     // 打印堆栈
     buf << "===== exception stack trace begin =====\n";
@@ -71,12 +53,12 @@ string Exception::getMsg() const {
     return buf.str();
 }
 
-void Exception::printTo(std::ostream &output) const {
-    auto msg = this->getMsg();
-    output.write(msg.data(), core::safeConvert<std::streamsize>(msg.length()));
+void Exception::print_to(std::ostream &output) const {
+    auto msg = this->get_msg();
+    output.write(msg.data(), core::safe_convert<std::streamsize>(msg.length()));
 }
 
 
 const char *Exception::what() const noexcept {
-    return msg_->c_str();
+    return msg_.c_str();
 }

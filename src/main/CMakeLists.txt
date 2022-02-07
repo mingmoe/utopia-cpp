@@ -23,13 +23,13 @@ set(
     "${U_MAIN_INCLUDE_DIR}/utopia/core/exception.hpp"
     "${U_MAIN_INCLUDE_DIR}/utopia/core/convert.hpp"
     "${U_MAIN_INCLUDE_DIR}/utopia/core/assert.hpp"
-    "${U_MAIN_INCLUDE_DIR}/utopia/core/buffer.hpp"
 )
 
 # 这些选项将会给client,server和test一起使用
 function(u_add_standard_options)
     u_add_boost_library(${ARGV})
     u_include_configure_header(${ARGV})
+    u_add_fmt_library(${ARGV})
     target_include_directories(
         ${ARGV}
         PUBLIC

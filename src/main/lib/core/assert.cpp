@@ -1,4 +1,4 @@
-//===--------------- assert.cpp - 断言函数实现 ---------------===//
+//===--------------- u_assert.cpp - 断言函数实现 ---------------===//
 //
 // this file is under the MIT License
 // See https://opensource.org/licenses/MIT for license information.
@@ -6,7 +6,7 @@
 //
 //===-------------------------------------------------------===//
 /// \file
-/// 这个文件实现了utopia::core::uassert
+/// 这个文件实现了utopia::core::u_assert
 //===-------------------------------------------------------===//
 
 #include <cstdio>
@@ -17,7 +17,7 @@
 
 #include <boost/stacktrace.hpp>
 
-void utopia::core::uassert(bool             condition,
+void utopia::core::u_assert(bool             condition,
                                         std::string_view reason) {
     if(!condition) {
         std::cerr << "utopia assert failed down!\n"
@@ -34,6 +34,6 @@ void utopia::core::uassert(bool             condition,
 }
 
 [[noreturn]] void utopia::core::failed(std::string_view reason) {
-    utopia::core::uassert(false,reason);
+    utopia::core::u_assert(false,reason);
     abort();
 }

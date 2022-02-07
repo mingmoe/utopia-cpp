@@ -29,7 +29,7 @@ namespace utopia::core {
     /// @param output 输出。如果转换失败则不赋值。
     /// @return     转换成功返回true，否则返回false。
     template<std::signed_integral TO, std::unsigned_integral FROM>
-    constexpr inline bool safeSignCast(FROM input, TO &output) {
+    constexpr inline bool safe_sign_cast(FROM input, TO &output) {
         const constexpr auto outputMax =
             static_cast<uintmax_t>(std::numeric_limits<TO>::max());
 
@@ -47,11 +47,11 @@ namespace utopia::core {
     /// @param output 输出。如果转换失败则不赋值。
     /// @return     转换成功返回true，否则返回false。
     template<std::unsigned_integral TO, std::signed_integral FROM>
-    constexpr inline bool safeSignCast(FROM input, TO &output) {
+    constexpr inline bool safe_sign_cast(FROM input, TO &output) {
         if(input < 0) {
             return false;
         }
-        return safeNumberCast<TO, uintmax_t>(static_cast<uintmax_t>(input),
+        return safe_number_cast<TO, uintmax_t>(static_cast<uintmax_t>(input),
                                              output);
     }
 
@@ -60,7 +60,7 @@ namespace utopia::core {
     /// @param to    输出。如果转换失败则不操作。
     /// @return     如果转换成功则返回true，否则返回false。
     template<std::integral TO, std::integral FROM>
-    constexpr inline bool safeNumberCast(FROM input, TO &output) {
+    constexpr inline bool safe_number_cast(FROM input, TO &output) {
         static_assert(
             std::numeric_limits<TO>::is_signed ==
                 std::numeric_limits<FROM>::is_signed,
@@ -87,18 +87,18 @@ namespace utopia::core {
     /// @param input    输入
     /// @return         输出
     template<std::integral TO, std::integral FROM>
-    constexpr inline TO safeConvert(FROM input) {
+    constexpr inline TO safe_convert(FROM input) {
         if constexpr(std::numeric_limits<TO>::is_signed ==
                      std::numeric_limits<FROM>::is_signed) {
             TO output = 0;
-            if(safeNumberCast<TO, FROM>(input, output)) {
+            if(saf_number_cast<TO, FROM>(input, output)) {
                 return output;
             }
             utopia::core::failed("number convert failed down:out of range!");
         }
         else {
             TO output = 0;
-            if(safeSignCast<TO, FROM>(input, output)) {
+            if(safe_sign_cast<TO, FROM>(input, output)) {
                 return output;
             }
             utopia::core::failed("number convert failed down:out of range!");

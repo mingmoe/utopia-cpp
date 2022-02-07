@@ -17,9 +17,8 @@
 #include <cstring>
 #include <filesystem>
 #include <fstream>
+#include <span>
 #include <string>
-
-#include <utopia/core/buffer.hpp>
 #include <utopia/core/exception.hpp>
 
 namespace utopia::client::text {
@@ -28,36 +27,41 @@ namespace utopia::client::text {
     /// @note 禁用复制构造(赋值)函数，只使用移动构造(赋值)函数
     class FontSource {
       public:
-        FontSource()                               = default;
-        virtual ~FontSource()                      = default;
+
+        FontSource()                       = default;
+        virtual ~FontSource()              = default;
         FontSource(FontSource &&) noexcept = default;
         FontSource &operator=(FontSource &&) noexcept = default;
 
-        FontSource(const FontSource &)                        = delete;
+        FontSource(const FontSource &)                = delete;
         FontSource &operator=(const FontSource &) = delete;
 
         /// @brief  获取字体标识符。供人类阅读。
         /// @return 字体的标识符，如文件路径，URL等。
-        [[nodiscard]] virtual inline std::string getSourceName() const noexcept {
+        [[nodiscard]] virtual inline std::string
+            get_source_name() const noexcept {
             return std::string{ "unknown unnamed font" };
         }
 
         /// @brief  获取字体
         /// @return 字体源文件的缓冲区
-        [[nodiscard]] virtual utopia::core::Buffer
-            getFontSource() const noexcept = 0;
+        [[nodiscard]] virtual std::span<const char>
+            get_font_source() const noexcept = 0;
     };
 
     /// @brief 来自文件的字体
     class FileFontSource : public FontSource {
       private:
+
         std::string          full_path_{};
-        utopia::core::Buffer buffer_{};
+        std::span<const char> buffer_{};
+
       public:
+
         /// @brief 从文件构造一个字体。
         /// 有点重量级：将会把文件读取到内存，直到析构。
         /// @param fontFile 字体文件。如果无法打开则抛出IOException
-        explicit FileFontSource(const std::string& fontFile) {
+        explicit FileFontSource(const std::string &fontFile) {
             // 获取绝对路径&&文件大小
             std::uintmax_t        file_size{ 0 };
             std::filesystem::path abs_path;
@@ -82,10 +86,9 @@ namespace utopia::client::text {
                 THROW_UTOPIA_EXCEPTION_FROM_ERRNO(IOException);
             }
 
-            auto *buffer = new uint8_t[file_size]; // NOLINT
+            auto *buffer = new char[file_size];   // NOLINT
 
-            // NOLINTNEXTLINE
-            ifs.read(reinterpret_cast<char *>(buffer), file_size);
+            ifs.read(buffer, file_size);
 
             if(!ifs.eof()) {
                 THROW_UTOPIA_EXCEPTION(
@@ -95,50 +98,52 @@ namespace utopia::client::text {
 
             ifs.close();
 
-            this->buffer_ = utopia::core::Buffer{};
-            this->buffer_.buffer = buffer;
-            this->buffer_.size   = file_size;
+            this->buffer_ = std::span<const char>{ buffer, file_size };
         }
 
         /// 析构，同时释放缓冲区内存
         ~FileFontSource() override {
-            if(buffer_.buffer != nullptr) {
-                delete[] buffer_.buffer;
-                buffer_.buffer = nullptr;
+            if(buffer_.data() != nullptr) {
+                delete[] buffer_.data();
+                buffer_ = std::span<const char>{};
             }
         }
 
+        /// @brief 移动构造函数
         FileFontSource(FileFontSource &&origin) noexcept {
             *this = std::move(origin);
         }
 
+        /// @brief 移动赋值函数
         FileFontSource &operator=(FileFontSource &&origin) noexcept {
             this->full_path_  = std::move(origin.full_path_);
-            this->buffer_     = origin.buffer_;
+            this->buffer_     = std::move(origin.buffer_);
 
             origin.full_path_ = std::string{};
-            origin.buffer_ =
-                utopia::core::Buffer{ .buffer = nullptr, .size = 0 };
+            origin.buffer_    = std::span<const char>{};
 
             return *this;
         }
 
+        // 复制函数都被删除
         FileFontSource(const FileFontSource &) = delete;
         FileFontSource &operator=(const FileFontSource &) = delete;
 
         /// @brief    获取文件路径
         /// @return   文件路径。不一定等于构造函数传入的路径
-        std::string getFilePath() {
+        std::string get_file_path() {
             return full_path_;
         }
 
+        /// @brief 直接返回文件的绝对路径
         [[nodiscard]] inline std::string
-            getSourceName() const noexcept override {
+            get_source_name() const noexcept override {
             return this->full_path_;
         }
 
-        [[nodiscard]] inline utopia::core::Buffer
-            getFontSource() const noexcept override {
+        /// @brief 返回文件内容
+        [[nodiscard]] inline std::span<const char>
+            get_font_source() const noexcept override {
             return this->buffer_;
         }
     };

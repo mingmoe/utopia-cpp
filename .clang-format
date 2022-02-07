@@ -138,10 +138,10 @@ Cpp11BracedListStyle: false
 DeriveLineEnding: true
 
 # 决定是否在访问修饰符后放置空行
-EmptyLineAfterAccessModifier: Never
+EmptyLineAfterAccessModifier: Always
 
 # 决定是否在访问修饰符前放置空行
-EmptyLineBeforeAccessModifier: Never
+EmptyLineBeforeAccessModifier: Always
 
 # 决定是否在命名空间结束添加括号
 FixNamespaceComments: true
