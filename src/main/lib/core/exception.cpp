@@ -20,19 +20,11 @@
 using namespace std;
 using namespace utopia::core;
 
-Exception::Exception(const char                 *msg,
+Exception::Exception(const std::string          &msg,
                      const std::source_location &local) noexcept :
     line_(local.line()),
-    file_(local.file_name()) {
-    // 检查信息字符串
-    if(msg == nullptr) {
-        msg = "unknown reason";
-    }
-
-    this->msg_         = std::string{ msg };
-
-    this->stack_trace_ = boost::stacktrace::stacktrace();
-}
+    file_(local.file_name()), msg_(msg),
+    stack_trace_(boost::stacktrace::stacktrace()) {}
 
 string Exception::get_msg() const {
     std::ostringstream buf;
@@ -61,4 +53,58 @@ void Exception::print_to(std::ostream &output) const {
 
 const char *Exception::what() const noexcept {
     return msg_.c_str();
+}
+
+#ifdef UTOPIA_IN_WINDOWS
+    #include <Windows.h>
+#endif
+
+#include <cerrno>
+#include <sstream>
+
+std::string utopia::core::get_last_system_error_msg() {
+    std::ostringstream buf{};
+
+    auto               errno_code = errno;
+
+    if(errno_code == 0) {
+        buf << "no errno error(code=0)";
+    }
+    else {
+        buf << "errno error(code=" << std::to_string(errno_code)
+            << "):" << std::strerror(errno_code);
+    }
+
+#ifdef UTOPIA_IN_WINDOWS
+    buf << "\n";
+
+    auto win_error_code = ::GetLastError();
+
+    if(win_error_code == 0) {
+        buf << "not found windows error(code=0)";
+    }
+    else {
+
+        LPSTR     win_error_msg_buffer = nullptr;
+
+        auto        size = ::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER |
+                                        FORMAT_MESSAGE_FROM_SYSTEM |
+                                        FORMAT_MESSAGE_IGNORE_INSERTS,
+                                    nullptr,
+                                    win_error_code,
+                                    0,
+                                    win_error_msg_buffer,
+                                    0,
+                                    nullptr);
+
+        std::string message(win_error_msg_buffer, size);
+
+        buf << "found windows error(code=" << std::to_string(win_error_code)
+            << "):" << message;
+
+        LocalFree(win_error_msg_buffer);
+    }
+#endif
+
+    return buf.str();
 }

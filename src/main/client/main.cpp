@@ -10,12 +10,15 @@
 /// 不应该与测试相链接。
 //===-----------------------------------------------------===//
 
-#include <iostream>
-#include <memory>
+#ifndef UTOPIA_PLATFORM_TEST
+    #ifndef UTOPIA_PLATFORM_CLIENT
+        #error this file is only compiled in client of utopia
+    #endif
 
-#include <utopia/core/exception.hpp>
+    #include <iostream>
+    #include <memory>
 
-#include <utopia/client/text/source.hpp>
+    #include <utopia/client/render/text/text.hpp>
 
 /// @brief      入口函数
 // @param argc 参数数量
@@ -23,7 +26,44 @@
 /// @return 程序返回值。如果正常退出返回0，否则返回非0值；
 int main(int /*argc*/, char * /*argv*/[]) {
 
-    utopia::client::text::FileFontSource f{ "" };
+    auto source =
+        utopia::client::render::text::FileFontSource::create(
+            "C:\\Users\\mingm\\Project\\utopia\\build\\src\\main\\client\\Debug\\font.ttf");
 
+    auto library  = utopia::client::render::text::Library::create();
+
+    auto font     = utopia::client::render::text::Font::create(source, library);
+
+    auto face     = utopia::client::render::text::Face::create(font, 0);
+
+    face->set_size(24, 24, 14);
+
+    auto renderer = utopia::client::render::text::Renderer::create(face);
+
+    auto code     = renderer->get_glyph_id(U'行');
+
+    std::cout << "code:" << code << std::endl;
+
+    auto bitmap   = renderer->render(code);
+
+    auto x        = bitmap.get_x_size();
+    auto y        = bitmap.get_y_size();
+
+    for(uint64_t y_ptr = 0; y_ptr < y; y_ptr++) {
+        for(uint64_t x_ptr = 0; x_ptr < x; x_ptr++) {
+            auto bit = bitmap.get_point(x_ptr, y_ptr);
+
+            if(bit.alpha != 0) {
+                std::cout << "*";
+            }
+            else {
+                std::cout << " ";
+            }
+        }
+        std::cout << "\n";
+    }
+    
     return 0;
 }
+
+#endif

@@ -91,7 +91,7 @@ namespace utopia::core {
         if constexpr(std::numeric_limits<TO>::is_signed ==
                      std::numeric_limits<FROM>::is_signed) {
             TO output = 0;
-            if(saf_number_cast<TO, FROM>(input, output)) {
+            if(safe_number_cast<TO, FROM>(input, output)) {
                 return output;
             }
             utopia::core::failed("number convert failed down:out of range!");

@@ -10,10 +10,15 @@
 /// 不应该与测试相链接。
 //===-----------------------------------------------------===//
 
-#include <iostream>
-#include <memory>
+#ifndef UTOPIA_PLATFORM_TEST
+    #ifndef UTOPIA_PLATFORM_SERVER
+        #error this file is only compiled in server of utopia
+    #endif
 
-#include <utopia/core/convert.hpp>
+    #include <iostream>
+    #include <memory>
+
+    #include <utopia/core/convert.hpp>
 
 /// @brief      入口函数
 // @param argc 参数数量
@@ -23,3 +28,6 @@ int main(int /*argc*/, char * /*argv*/[]) {
 
     return 0;
 }
+
+
+#endif

@@ -8,14 +8,28 @@ u_close_clang_tidy()
 
 set(U_TEST_SOURCE_FILE 
     "${CMAKE_CURRENT_SOURCE_DIR}/core/convert_test.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/check_ops_test.cpp"
 )
+
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX test FILES ${U_TEST_SOURCE_FILE})
 
 add_executable(
     ${U_PROJECT_TEST}
-    ${U_MAIN_SOURCE_FILE_WITHOUT_MAIN}
-    ${U_MAIN_SOURCE_HEADER_FILE}
+    ${U_CORE_TOTAL_FILE}
+    ${U_SERVER_TOTAL_FILE}
+    ${U_CLIENT_TOTAL_FILE}
     ${U_TEST_SOURCE_FILE}
 )
 
 u_add_standard_options(${U_PROJECT_TEST})
+
+# 还需要同时添加客户端依赖
 u_add_google_test(${U_PROJECT_TEST})
+u_add_sdl2_library(${U_PROJECT_TEST})
+u_add_harfbuzz_library(${U_PROJECT_TEST})
+u_add_freetype_library(${U_PROJECT_TEST})
+
+# 为特定的编译目标添加宏
+target_compile_definitions(${U_PROJECT_TEST} PUBLIC UTOPIA_PLATFORM_SERVER)
+target_compile_definitions(${U_PROJECT_TEST} PUBLIC UTOPIA_PLATFORM_CLIENT)
+target_compile_definitions(${U_PROJECT_TEST} PUBLIC UTOPIA_PLATFORM_TEST)

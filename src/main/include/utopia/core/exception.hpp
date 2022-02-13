@@ -4,17 +4,16 @@
 // See https://opensource.org/licenses/MIT for license information.
 // Copyright(c) 2020-2022 moe-org All rights reserved.
 //
-//===-----------------------------------------------------===//
+//===-------------------------------------------------------===//
 /// \file
 /// 这个文件声明了utopia::Exception。
 /// 这个类应该是整个utopia异常系统的基类。
-//===-----------------------------------------------------===//
+//===-------------------------------------------------------===//
 
 #ifndef UTOPIA_CORE_EXCEPTION_HPP
 #define UTOPIA_CORE_EXCEPTION_HPP
 
-#include <utopia-configured.hpp>
-
+#include <boost/stacktrace.hpp>
 #include <cerrno>
 #include <cstring>
 #include <exception>
@@ -24,7 +23,7 @@
 #include <string>
 #include <string_view>
 
-#include <boost/stacktrace.hpp>
+#include <utopia-configured.hpp>
 
 namespace utopia::core {
 
@@ -37,11 +36,11 @@ namespace utopia::core {
       public:
 
         /// @brief 构造一个异常
-        /// @param msg 异常信息
+        /// @param msg 异常信息，在构造时将会被复制。
         /// @param local 构造异常的源代码位置
-        Exception(const char                 *msg,
+        Exception(const std::string          &msg,
                   const std::source_location &local =
-                      std::source_location::current());
+                      std::source_location::current()) noexcept;
 
         // define some default functions
         Exception(const Exception &) = delete;
@@ -69,6 +68,7 @@ namespace utopia::core {
         [[nodiscard]] virtual std::string get_msg() const;
 
         /// @brief			输出异常信息到流
+        /// @note 等价于output.write(get_msg())
         /// @param output	要输出的流
         virtual void print_to(std::ostream &output) const;
 
@@ -92,10 +92,10 @@ namespace utopia::core {
     // 用于定义一个新异常
     // NOLINTNEXTLINE
 #define DEFINED_UTOPIA_EXCEPTION(exceptionName)                                \
-    class exceptionName##Exception : public Exception {                        \
+    class exceptionName##Exception : public utopia::core::Exception {          \
       public:                                                                  \
                                                                                \
-        exceptionName##Exception(const char                 *msg,              \
+        exceptionName##Exception(const std::string          &msg,              \
                                  const std::source_location &local =           \
                                      std::source_location::current()) noexcept \
             :                                                                  \
@@ -103,20 +103,30 @@ namespace utopia::core {
                                                                                \
         inline virtual std::string get_name() const noexcept override {        \
             return std::string{ #exceptionName "Exception" };                  \
-        }                                                                      \
+        }
+
+
+#define DEFINED_UTOPIA_SIMPLE_EXCEPTION(exceptionName)                         \
+    DEFINED_UTOPIA_EXCEPTION(exceptionName)                                    \
     }
 
     /// @brief  参数为nullptr异常
     // NOLINTNEXTLINE
-    DEFINED_UTOPIA_EXCEPTION(ArgumentNullptr);
+    DEFINED_UTOPIA_SIMPLE_EXCEPTION(IllegalArgument);
 
     /// @brief  IO异常
     // NOLINTNEXTLINE
-    DEFINED_UTOPIA_EXCEPTION(IO);
+    DEFINED_UTOPIA_SIMPLE_EXCEPTION(IO);
+
+    /// @brief 超出范围异常
+    // NOLINTNEXTLINE
+    DEFINED_UTOPIA_SIMPLE_EXCEPTION(OutOfRange);
 
     // NOLINTEND(*-macro-*)
 
-#undef DEFINED_UTOPIA_EXCEPTION
+    /// @brief  获取上一次系统错误的信息(errno()|GetLastError)。(strerror|FormatMessage)
+    /// @return 适用于人类阅读的错误信息
+    std::string get_last_system_error_msg();
 
 }   // namespace utopia::core
 

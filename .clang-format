@@ -152,18 +152,13 @@ IncludeBlocks: Regroup
 # include分组优先级分类
 # 优先级越低越靠前
 IncludeCategories:
-  - Regex:           '^<utopia-library/'
-    Priority:        30
-    SortPriority:    30
-  - Regex:           '^<(gtest|gmock|isl|json|boost)/'
-    Priority:        30
-    SortPriority:    30
+  - Regex:           '^<utopia-configured\.hpp>$'
+    Priority:        20
+    SortPriority:    20
   - Regex:           '^<(utopia)/'
     Priority:        20
     SortPriority:    20
-  - Regex:           '^<utopia-configured\.hpp>$'
-    Priority:        0
-    SortPriority:    0
+    # 这个放前面会全匹配了
   - Regex:           '.*'
     Priority:        10
     SortPriority:    10
