@@ -75,8 +75,7 @@ namespace utopia::client::render {
         }
 
         // 重写五法则类
-        // 不允许复制
-        // 允许移动
+        // 允许复制和移动
         ~Bitmap() {
             if(data_ != nullptr) {
                 for(uint64_t ptr = 0; ptr != y_size_; ptr++) {
@@ -90,8 +89,18 @@ namespace utopia::client::render {
             y_size_ = 0;
         }
 
-        Bitmap(const Bitmap &) = delete;
-        Bitmap &operator=(const Bitmap &) = delete;
+        Bitmap(const Bitmap &origin) {
+            *this = origin;
+        }
+        Bitmap &operator=(const Bitmap &origin){
+            this->clear_and_resize(origin.get_x_size(), origin.get_y_size());
+
+            for(auto x = 0; x != this->x_size_; x++) {
+                for(auto y = 0; y != this->x_size_; y++) {
+                    write_point(x, y, origin.get_point(x, y));
+                }
+            }
+        }
 
         Bitmap(Bitmap &&origin) noexcept {
             *this = std::move(origin);
@@ -104,6 +113,8 @@ namespace utopia::client::render {
             this->x_size_  = origin.x_size_;
             this->y_size_  = origin.y_size_;
 
+            // 我们不手动调用origin的析构函数
+            // 否则data_会被delete[]
             origin.data_   = nullptr;
             origin.x_size_ = 0;
             origin.y_size_ = 0;

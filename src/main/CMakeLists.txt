@@ -26,15 +26,18 @@ set(
     "${U_MAIN_INCLUDE_DIR}/utopia/core/convert.hpp"
     "${U_MAIN_INCLUDE_DIR}/utopia/core/assert.hpp"
     "${U_MAIN_INCLUDE_DIR}/utopia/core/check_ops.hpp"
+    "${U_MAIN_INCLUDE_DIR}/utopia/core/concepts.hpp"
+    "${U_MAIN_INCLUDE_DIR}/utopia/core/guard.hpp"
 )
+set(U_CORE_TOTAL_FILE ${U_CORE_SOURCE_FILE} ${U_CORE_HEADER_FILE})
 
+# 设置IDE项目结构
 function(u_set_core_source_group)
     source_group(TREE "${U_MAIN_SOURCE_DIR}/lib" FILES ${U_CORE_SOURCE_FILE})
     source_group(TREE ${U_MAIN_SOURCE_DIR} FILES ${U_CORE_HEADER_FILE})
 endfunction(u_set_core_source_group)
 
-set(U_CORE_TOTAL_FILE ${U_CORE_SOURCE_FILE} ${U_CORE_HEADER_FILE})
-
+# 标准选项
 # 这些选项将会给client,server和test一起使用
 function(u_add_standard_options)
     u_add_boost_library(${ARGV})
@@ -52,6 +55,5 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/client")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/server")
 
 # 我们的测试可还需要这些源文件
-set(U_CLIENT_TOTAL_FILE ${U_CLIENT_TOTAL_FILE} PARENT_SCOPE)
-set(U_SERVER_TOTAL_FILE ${U_SERVER_TOTAL_FILE} PARENT_SCOPE)
-set(U_CORE_TOTAL_FILE ${U_CORE_TOTAL_FILE} PARENT_SCOPE)
+set(U_CLIENT_TEST_FILE ${U_CLIENT_TEST_FILE} PARENT_SCOPE)
+set(U_SERVER_TEST_FILE ${U_SERVER_TEST_FILE} PARENT_SCOPE)

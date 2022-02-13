@@ -33,11 +33,11 @@ utopia::client::render::Bitmap
 
     auto err         = FT_Load_Glyph(face, id, FT_LOAD_COLOR);
 
-    throwFreetypeError(err);
+    assert_freetype_error(err);
 
     err = FT_Render_Glyph(glyph, FT_RENDER_MODE_NORMAL);
 
-    throwFreetypeError(err);
+    assert_freetype_error(err);
 
     // 复制位图
     auto                           bitmap = glyph->bitmap;

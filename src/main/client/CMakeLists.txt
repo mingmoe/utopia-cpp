@@ -4,10 +4,17 @@
 # Copyright (c) 2020-2022 moe-org All rights reserved.
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+set(U_CLIENT_TEST_FILE
+    PARENT_SCOPE
+)
+
 set(U_CLIENT_SOURCE_FILE 
     "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
+
     "${CMAKE_CURRENT_SOURCE_DIR}/render/text/face.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/render/text/renderer.cpp"
+    
+    "${CMAKE_CURRENT_SOURCE_DIR}/render/sdl/surface.cpp"
 )
 set(U_CLIENT_HEADER_FILE
     "${U_MAIN_INCLUDE_DIR}/utopia/client/render/bitmap.hpp"
@@ -19,9 +26,15 @@ set(U_CLIENT_HEADER_FILE
     "${U_MAIN_INCLUDE_DIR}/utopia/client/render/text/error.hpp"
     "${U_MAIN_INCLUDE_DIR}/utopia/client/render/text/renderer.hpp"
     "${U_MAIN_INCLUDE_DIR}/utopia/client/render/text/text.hpp"
+
+    "${U_MAIN_INCLUDE_DIR}/utopia/client/render/sdl/error.hpp"
+    "${U_MAIN_INCLUDE_DIR}/utopia/client/render/sdl/window.hpp"
+    "${U_MAIN_INCLUDE_DIR}/utopia/client/render/sdl/renderer.hpp"
+    "${U_MAIN_INCLUDE_DIR}/utopia/client/render/sdl/surface.hpp"
+    "${U_MAIN_INCLUDE_DIR}/utopia/client/render/sdl/texture.hpp"
+    "${U_MAIN_INCLUDE_DIR}/utopia/client/render/sdl/sdl.hpp"
 )
 set(U_CLIENT_TOTAL_FILE ${U_CLIENT_SOURCE_FILE} ${U_CLIENT_HEADER_FILE})
-set(U_CLIENT_TOTAL_FILE ${U_CLIENT_TOTAL_FILE} PARENT_SCOPE)
 
 u_set_core_source_group()
 

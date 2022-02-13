@@ -15,66 +15,64 @@
 #include <utopia/core/check_ops.hpp>
 
 TEST(Core, SafeSignedAddTest) {
-    const auto    max = std::numeric_limits<signed>::max();
-    const auto    min = std::numeric_limits<decltype(max)>::min();
-    signed result{ 0 };
+    const constexpr auto max = std::numeric_limits<signed>::max();
+    const constexpr auto min = std::numeric_limits<decltype(max)>::min();
+    signed               opt{ 0 };
 
-    auto          result = utopia::core::safe_add(max, 1, result);
+    auto                 result = utopia::core::safe_add(max, 1, opt);
 
     EXPECT_FALSE(result);
 
-    result = utopia::core::safe_add(max, -1, result);
+    result = utopia::core::safe_add(max, -1, opt);
 
     EXPECT_TRUE(result);
 
-    result = utopia::core::safe_add(min, -1, result);
+    result = utopia::core::safe_add(min, -1, opt);
 
     EXPECT_FALSE(result);
 
-    result = utopia::core::safe_add(min, max, result);
+    result = utopia::core::safe_add(min, max, opt);
 
     EXPECT_TRUE(result);
 }
 
 
 TEST(Core, SafeSubTest) {
-    const auto max = std::numeric_limits<signed>::max();
-    const auto min = std::numeric_limits<decltype(max)>::min();
-    signed     result{ 0 };
+    const constexpr auto max = std::numeric_limits<signed>::max();
+    const constexpr auto min = std::numeric_limits<decltype(max)>::min();
+    signed               opt{ 0 };
 
-    auto       result = utopia::core::safe_sub(max, 1, result);
+    auto                 result = utopia::core::safe_sub(max, 1, opt);
 
     EXPECT_TRUE(result);
 
-    result = utopia::core::safe_sub(max, -1, result);
+    result = utopia::core::safe_sub(max, -1, opt);
 
     EXPECT_FALSE(result);
 
-    result = utopia::core::safe_sub(min, -1, result);
+    result = utopia::core::safe_sub(min, -1, opt);
 
     EXPECT_TRUE(result);
 
-    result = utopia::core::safe_sub(min, max, result);
+    result = utopia::core::safe_sub(min, max, opt);
 
     EXPECT_FALSE(result);
 }
 
 TEST(Core, SafeMulTest) {
-    const auto max = std::numeric_limits<signed>::max();
-    const auto min = std::numeric_limits<decltype(max)>::min();
-    signed     result{ 0 };
+    const constexpr auto max = std::numeric_limits<signed>::max();
+    signed               opt{ 0 };
 
-    auto       result = utopia::core::safe_mul(max, 2, result);
+    auto                 result = utopia::core::safe_mul(max, 2, opt);
 
     EXPECT_FALSE(result);
 }
 
 TEST(Core, SafeDivTest) {
-    const auto max = std::numeric_limits<signed>::max();
-    const auto min = std::numeric_limits<decltype(max)>::min();
-    signed     result{ 0 };
+    const constexpr auto max = std::numeric_limits<signed>::max();
+    signed               opt{ 0 };
 
-    auto       result = utopia::core::safe_div(max, 0, result);
+    auto                 result = utopia::core::safe_div(max, 0, opt);
 
     EXPECT_FALSE(result);
 }

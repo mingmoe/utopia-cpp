@@ -9,7 +9,8 @@ find_package(GTest CONFIG REQUIRED)
 include(GoogleTest)
 
 function(u_add_google_test)
-    target_link_libraries(${ARGV} PRIVATE GTest::gmock GTest::gtest GTest::gmock_main GTest::gtest_main)
+    # GTest::gmock GTest::gmock_main
+    target_link_libraries(${ARGV} PRIVATE GTest::gtest GTest::gtest_main)
     gtest_discover_tests(${ARGV})
 endfunction(u_add_google_test)
 

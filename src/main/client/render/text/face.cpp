@@ -25,11 +25,11 @@ void utopia::client::render::text::Face::set_size(int x, int y, double point) {
         72,
         72);
 
-    throwFreetypeError(ft_error_code);
+    assert_freetype_error(ft_error_code);
 
     // 设置像素大小
     hb_font_set_ppem(this->hb_font_.get(), x, y);
     ft_error_code = FT_Set_Pixel_Sizes(*ft_face_.get(), x, y);
 
-    throwFreetypeError(ft_error_code);
+    assert_freetype_error(ft_error_code);
 }
