@@ -14,8 +14,10 @@ set(U_3RD_LIBRARY_FUNCTION_LIST "")
 file(GLOB_RECURSE U_3RD_LIBRARY_CMAKE_LIST "${U_CMAKE_MODULE_DIR}/library/*")
 foreach(LIB_CMAKE IN LISTS U_3RD_LIBRARY_CMAKE_LIST)
     message(STATUS "load 3rd library support:${LIB_CMAKE}")
-    include(${LIB_CMAKE})
+    u_include(${LIB_CMAKE})
 endforeach()
+
+unset(U_3RD_LIBRARY_CMAKE_LIST)
 
 # 打印信息
 message(STATUS "//==--- utopia 3rd library list ---==//")
@@ -27,4 +29,3 @@ message(STATUS "//==--- utopia 3rd library list ---==//")
 
 # 拉完屎擦干净是好习惯
 unset(U_3RD_LIBRARY_FUNCTION_LIST)
-unset(U_3RD_LIBRARY_CMAKE_LIST)

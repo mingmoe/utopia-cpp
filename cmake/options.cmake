@@ -8,24 +8,13 @@
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 # clang tidy设置
-if(NOT DEFINED UTOPIA_PUBLIC_CLANG_TIDY_PATH)
-    set(UTOPIA_PUBLIC_CLANG_TIDY_PATH "clang-tidy")
-endif()
-
 if("${UTOPIA_PUBLIC_ENABLE_CLANG_TIDY}" STREQUAL ON)
-    if(NOT MSVC)
-        function(u_open_clang_tidy)
-            set(CMAKE_CXX_CLANG_TIDY 
+    function(u_open_clang_tidy)
+        set(CMAKE_CXX_CLANG_TIDY 
             ${UTOPIA_PUBLIC_CLANG_TIDY_PATH}
             --use-color
-            PARENT_SCOPE
-        )
-        endfunction(u_open_clang_tidy)
-    else()
-        message(STATUS "因为某些问题，使用MSVC将会禁用clang-tidy")
-        function(u_open_clang_tidy)
-        endfunction(u_open_clang_tidy)
-    endif()
+            PARENT_SCOPE)
+    endfunction(u_open_clang_tidy)
 else()
     function(u_open_clang_tidy)
     endfunction(u_open_clang_tidy)
@@ -79,7 +68,6 @@ else() # for gcc\clang
     unset(U__TEMP__FLAGS_RELEASE)
 endif()
 
-
 # 第三方编译选项列表
 set(U_COMPILE_OPTIONS_INFO_LIST "")
 
@@ -88,7 +76,7 @@ file(GLOB_RECURSE U_COMPILE_OPTIONS_SETTINGS "${U_CMAKE_MODULE_DIR}/options/*")
 
 foreach(OPTION IN LISTS U_COMPILE_OPTIONS_SETTINGS)
     message(STATUS "loading compiler options from:${OPTION}")
-    include(${OPTION})
+    u_include(${OPTION})
 endforeach()
 
 unset(U_COMPILE_OPTIONS_SETTINGS)

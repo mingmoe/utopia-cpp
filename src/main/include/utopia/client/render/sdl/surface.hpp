@@ -63,10 +63,10 @@ namespace utopia::client::render::sdl {
         inline void set_rle(bool is_open) {
             int error{ 0 };
             if(is_open) {
-                auto error = SDL_SetSurfaceRLE(handle_, 1);
+                error = SDL_SetSurfaceRLE(handle_, 1);
             }
             else {
-                auto error = SDL_SetSurfaceRLE(handle_, 0);
+                error = SDL_SetSurfaceRLE(handle_, 0);
             }
             nonzero_then_throw_sdl_exception(error);
         }

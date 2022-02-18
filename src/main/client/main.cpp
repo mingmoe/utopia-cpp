@@ -18,29 +18,31 @@
 
     #include <iostream>
     #include <memory>
+    #include <vector>
 
     #include <utopia/client/render/sdl/sdl.hpp>
     #include <utopia/client/render/text/text.hpp>
 
+static auto source = utopia::client::render::text::FileFontSource::create(
+    "C:\\Users\\mingm\\Project\\utopia\\build\\src\\main\\client\\Debug\\font.ttf");
+
+static auto library = utopia::client::render::text::Library::create();
+
+static auto font =
+    utopia::client::render::text::Font::create(source, library, 0);
+
+static auto face     = utopia::client::render::text::Face::create(font);
+
+static auto renderer = utopia::client::render::text::Renderer::create(face);
+
+static auto shaper   = utopia::client::render::text::Shaper::create();
+
 std::unique_ptr<utopia::client::render::sdl::Texture>
-    get_font(char32_t c, utopia::client::render::sdl::Renderer &render) {
-    static auto source = utopia::client::render::text::FileFontSource::create(
-        "C:\\Users\\mingm\\Project\\utopia\\build\\src\\main\\client\\Debug\\font.ttf");
-
-    static auto library = utopia::client::render::text::Library::create();
-
-    static auto font =
-        utopia::client::render::text::Font::create(source, library);
-
-    static auto face     = utopia::client::render::text::Face::create(font, 0);
-
-    static auto renderer = utopia::client::render::text::Renderer::create(face);
+    get_font(char32_t id, utopia::client::render::sdl::Renderer &render) {
 
     face->set_size(50, 50, 14);
 
-    auto                                 code   = renderer->get_glyph_id(c);
-
-    auto                                 bitmap = renderer->render(code);
+    auto                                 bitmap = renderer->render(id);
 
     utopia::client::render::sdl::Surface surface{
         static_cast<int>(bitmap.get_x_size()),
@@ -67,16 +69,35 @@ int main(int /*argc*/, char * /*argv*/[]) {
 
     utopia::client::render::sdl::Renderer renderer{ window.get_ptr() };
 
+    // 排版
+    shaper->add_text(UNICODE_STRING_SIMPLE("😅😅😅"), 0, -1);
 
-    auto                                  fonts = { get_font(U'😅', renderer),
-                   get_font(U'😊', renderer),
-                   get_font(U'😍', renderer) };
+    shaper->set_direction_left_to_right(true);
+    shaper->set_language("en-US");
+    shaper->set_script("215");
 
-    SDL_Rect                              texture_rect;
-    texture_rect.x        = 50;   //the x coordinate
+    auto result = shaper->shape(face);
+
+    std::vector<std::pair<std::unique_ptr<utopia::client::render::sdl::Texture>,
+                          SDL_Rect>>
+        text_results{};
+
+    for(auto &signle_char : result) {
+        auto font = get_font(signle_char.glyph_index, renderer);
+        auto goes = SDL_Rect{};
+
+        //goes.x    = signle_char.x_advance;
+        //goes.y    = signle_char.y_advance;
+        goes.x = 50;
+
+        text_results.push_back(std::make_pair(std::move(font), goes));
+    }
+
+    SDL_Rect texture_rect;
+    texture_rect.x        = 50;   // the x coordinate
     texture_rect.y        = 50;   // the y coordinate
-    texture_rect.w        = 50;   //the width of the texture
-    texture_rect.h        = 50;   //the height of the texture
+    texture_rect.w        = 50;   // the width of the texture
+    texture_rect.h        = 50;   // the height of the texture
 
     SDL_Rect current_rect = texture_rect;
 
@@ -84,18 +105,23 @@ int main(int /*argc*/, char * /*argv*/[]) {
 
         SDL_RenderClear(renderer.get_ptr());
 
-        for(auto &font : fonts) {
+        for(auto &s_char : text_results) {
+            auto texture = &s_char.first;
+            auto pos     = &s_char.second;
+
             SDL_RenderCopy(renderer.get_ptr(),
-                           font->get_ptr(),
+                           texture->get()->get_ptr(),
                            NULL,
                            &current_rect);
 
-            current_rect.x += 50;
+            current_rect.x += pos->x;
         }
         current_rect = texture_rect;
 
         SDL_RenderPresent(renderer.get_ptr());
     }
+
+    return 0;
 }
 
 #endif

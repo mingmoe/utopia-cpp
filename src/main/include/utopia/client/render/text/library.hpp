@@ -53,12 +53,12 @@ namespace utopia::client::render::text {
 
       public:
 
-        ~Library()                   = default;
+        ~Library()               = default;
 
-        Library(const Library &)     = default;
-        Library(Library &&) noexcept = default;
-        Library &operator=(const Library &) = default;
-        Library &operator=(Library &&) noexcept = default;
+        Library(const Library &) = delete;
+        Library(Library &&)      = delete;
+        Library &operator=(const Library &) = delete;
+        Library &operator=(Library &&) = delete;
 
         /// @brief 获取Freetype库
         [[nodiscard]] inline FTLibrarySharedPtr get_freetype() const noexcept {
@@ -68,10 +68,10 @@ namespace utopia::client::render::text {
         /// @brief     创建一个库，可能会抛出异常
         /// @exception FreetypeException 创建失败则抛出此异常
         [[nodiscard]] static inline std::shared_ptr<Library> create() {
-            return // NOLINTNEXTLINE
+            return   // NOLINTNEXTLINE
                 std::shared_ptr<Library>(new Library{});
         }
     };
-}   // namespace utopia::client::text
+}   // namespace utopia::client::render::text
 
 #endif

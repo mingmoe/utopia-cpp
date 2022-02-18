@@ -9,6 +9,7 @@
 
 include(FetchContent)
 
+# 检查配置
 if("${UTOPIA_PUBLIC_VCPKG_SOURCE_CN}" STREQUAL ON)
     set(X_VCPKG_ASSET_SOURCES "x-azurl,http://106.15.181.5/")
     set(ENV{X_VCPKG_ASSET_SOURCES} "x-azurl,http://106.15.181.5/")
@@ -20,6 +21,7 @@ else()
     set(U_VCPKG_SOURCE "https://github.com/microsoft/vcpkg")
 endif()
 
+# clone
 message(STATUS "clone/update vcpkg from ${U_VCPKG_SOURCE}, wait...")
 
 FetchContent_Declare(
@@ -28,6 +30,8 @@ FetchContent_Declare(
     SOURCE_DIR "${U_LIBRARY_DIR}"
     BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/vcpkg"
 )
+
+# use
 FetchContent_MakeAvailable(vcpkg)
 
 set(CMAKE_TOOLCHAIN_FILE "${U_LIBRARY_DIR}/scripts/buildsystems/vcpkg.cmake"

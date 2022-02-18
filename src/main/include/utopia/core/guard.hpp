@@ -21,7 +21,8 @@
 
 namespace utopia::core {
 
-    /// @brief Guard封装
+    /// @brief Guard封装。
+    /// 此类负责管理指针资源。在析构的时候会将指针作为参数传入到一个函数内。
     template<typename Type, typename UnlockFunc>
         requires std::is_same_v<void(Type *), UnlockFunc>
     class Guard {

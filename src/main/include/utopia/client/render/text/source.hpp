@@ -34,9 +34,9 @@ namespace utopia::client::render::text {
 
         FontSource()                       = default;
         virtual ~FontSource()              = default;
-        FontSource(FontSource &&) noexcept = default;
-        FontSource &operator=(FontSource &&) noexcept = default;
 
+        FontSource(FontSource &&) = delete;
+        FontSource &operator=(FontSource &&) = delete;
         FontSource(const FontSource &)                = delete;
         FontSource &operator=(const FontSource &) = delete;
 
@@ -116,26 +116,6 @@ namespace utopia::client::render::text {
                 buffer_ = std::span<const char>{};
             }
         }
-
-        /// @brief 移动构造函数
-        FileFontSource(FileFontSource &&origin) noexcept {
-            *this = std::move(origin);
-        }
-
-        /// @brief 移动赋值函数
-        FileFontSource &operator=(FileFontSource &&origin) noexcept {
-            this->full_path_  = std::move(origin.full_path_);
-            this->buffer_     = std::move(origin.buffer_);
-
-            origin.full_path_ = std::string{};
-            origin.buffer_    = std::span<const char>{};
-
-            return *this;
-        }
-
-        // 复制函数都被删除
-        FileFontSource(const FileFontSource &) = delete;
-        FileFontSource &operator=(const FileFontSource &) = delete;
 
         /// @brief    获取文件路径
         /// @return   文件路径。不一定等于构造函数传入的路径

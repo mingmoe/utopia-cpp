@@ -36,7 +36,7 @@ namespace utopia::client::render::text {
             std::string msg =
                 fmt::format("freetype error(code={}):{}",
                             error_code,
-                            err_info == nullptr ? "NULL" : err_info);
+                            err_info == nullptr ? "nullptr" : err_info);
             throw FreetypeException{ msg };
         }
     }

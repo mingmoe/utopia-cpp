@@ -28,24 +28,32 @@
 namespace utopia::client::render::text {
 
     namespace {
-        inline void deleteHarfbuzzBlob(hb_blob_t *ptr) {
+        inline void delete_harfbuzz_blob(hb_blob_t *ptr) {
             hb_blob_destroy(ptr);
+        }
+        inline void delete_harfbuzz_face(hb_face_t* ptr) {
+            hb_face_destroy(ptr);
         }
     }   // namespace
 
-    /// @brief 字体类。
+    /// @brief 字体类。只持有字体资源，不持有字体属性（比如字体大小）。
+    /// 有点重量级。省着点用。
     class Font {
       private:
 
-        std::shared_ptr<FontSource> source_;
-        std::shared_ptr<Library>    library_;
-        std::shared_ptr<hb_blob_t>  hb_blob_;
+        const uint16_t              face_index_;
+        std::shared_ptr<FontSource> source_{ nullptr };
+        std::shared_ptr<Library>    library_{ nullptr };
+        std::shared_ptr<hb_blob_t>  hb_blob_{ nullptr };
+        std::shared_ptr<hb_face_t>  hb_face_{ nullptr };
 
         Font(std::shared_ptr<FontSource> source,
-             std::shared_ptr<Library>    library) :
+             std::shared_ptr<Library>    library,
+             uint16_t                    face_index) :
             source_(source),
-            library_(library), hb_blob_(nullptr) {
+            face_index_(face_index), library_(library) {
 
+            // harfbuzz blob
             auto hb = hb_blob_create_or_fail(
                 source->get_font_source().data(),
                 utopia::core::safe_convert<unsigned int>(
@@ -60,17 +68,20 @@ namespace utopia::client::render::text {
                 };
             }
 
-            hb_blob_.reset(hb, &deleteHarfbuzzBlob);
+            hb_blob_.reset(hb, &delete_harfbuzz_blob);
+
+            // harfbuzz face
+            auto hb_face = hb_face_create(hb, face_index);
+            hb_face_.reset(hb_face, &delete_harfbuzz_face);
         }
 
       public:
 
-        ~Font()       = default;
-        Font &operator=(Font &&) noexcept = delete;
-        Font(Font &&) noexcept            = default;
-
-        Font(const Font &)                = delete;
+        ~Font()            = default;
+        Font(Font &&)      = delete;
+        Font(const Font &) = delete;
         Font &operator=(const Font &) = delete;
+        Font &operator=(Font &&) = delete;
 
         [[nodiscard]] inline std::shared_ptr<FontSource>
             get_source() const noexcept {
@@ -87,19 +98,30 @@ namespace utopia::client::render::text {
             return this->hb_blob_;
         }
 
+        [[nodiscard]] inline std::shared_ptr<hb_face_t>
+            get_harfbuzz_face() const noexcept {
+            return this->hb_face_;
+        }
+
+        [[nodiscard]] inline uint16_t
+            get_face_index() const noexcept {
+            return this->face_index_;
+        }
 
         /// @brief     创建一个字体，可能会抛出异常
         /// @exception HarfbuzzException 创建失败则抛出此异常
         /// @param source 字体源
         /// @param library 文本库
+        /// @param face_index 字体在字体集中的索引
         [[nodiscard]] static inline std::shared_ptr<Font>
             create(std::shared_ptr<FontSource> source,
-                   std::shared_ptr<Library>    library) {
+                   std::shared_ptr<Library>    library,
+                   uint16_t                    face_index) {
             return   // NOLINTNEXTLINE
-                std::shared_ptr<Font>(new Font{ source, library });
+                std::shared_ptr<Font>(new Font{ source, library, face_index });
         }
     };
 
-}   // namespace utopia::client::text
+}   // namespace utopia::client::render::text
 
 #endif

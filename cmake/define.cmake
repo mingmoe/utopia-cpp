@@ -19,6 +19,12 @@ set(U_CMAKE_MODULE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 # 项目源码目录
 set(U_UTOPIA_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
+# 项目核心
+set(U_PROJECT_CORE "${U_PROJECT}_core")
+
+# 项目客户端
+set(U_PROJECT_CLIENT "${U_PROJECT}_client")
+
 # 项目测试
 set(U_PROJECT_TEST "${U_PROJECT}_test")
 

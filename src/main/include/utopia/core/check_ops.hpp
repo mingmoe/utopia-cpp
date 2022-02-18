@@ -30,7 +30,7 @@ namespace utopia::core {
     template<std::integral T>
     [[nodiscard]] bool
         safe_add(T first, T second, std::remove_const_t<T> &output) noexcept{
-#ifdef UTOPIA_USE_GCC || UTOPIA_USE_CLANG
+#if defined(UTOPIA_USE_GCC) || defined(UTOPIA_USE_CLANG)
         return !__builtin_add_overflow(first, second, &output);
 #endif
         auto valued = ((second > 0) &&
@@ -65,7 +65,7 @@ namespace utopia::core {
     template<std::integral T>
     [[nodiscard]] bool
         safe_sub(T first, T second, std::remove_const_t<T> &output) noexcept {
-#ifdef UTOPIA_USE_GCC || UTOPIA_USE_CLANG
+#if defined(UTOPIA_USE_GCC) || defined(UTOPIA_USE_CLANG)
         return !__builtin_sub_overflow(first, second, &output);
 #endif
         auto valued =
@@ -100,7 +100,7 @@ namespace utopia::core {
     template<std::integral T>
     [[nodiscard]] bool
         safe_mul(T first, T second, std::remove_const_t<T> &output) noexcept {
-#ifdef UTOPIA_USE_GCC || UTOPIA_USE_CLANG
+#if defined(UTOPIA_USE_GCC) || defined(UTOPIA_USE_CLANG)
         return !__builtin_mul_overflow(first, second, &output);
 #endif
         if(first > 0) {    /* si_a is positive */
@@ -148,55 +148,6 @@ namespace utopia::core {
             utopia::core::failed("safe number mul overflow");
         }
         return output;
-    }
-
-    template<std::integral T>
-    [[nodiscard]] bool
-        safe_div(T first, T second, std::remove_const_t<T> &output) noexcept {
-        if constexpr(std::is_signed_v<T>) {
-            if((second == 0) ||
-               ((first == std::numeric_limits<T>::min()) && (second == -1))) {
-                return false;
-            }
-            else {
-                output = first / second;
-                return true;
-            }
-        }
-        else {
-            if(second == 0) {
-                return false;
-            }
-            else {
-                output = first / second;
-                return true;
-            }
-        }
-    }
-
-    template<std::integral T>
-    [[nodiscard]] bool
-        safe_rem(T first, T second, std::remove_const_t<T> &output) {
-        if constexpr(std::is_signed_v<T>) noexcept {
-                if((second == 0) || ((first == std::numeric_limits<T>::min()) &&
-                                     (second == -1))) {
-                /* Handle error */
-                return false;
-            }
-            else {
-                output = first % second;
-                return true;
-            }
-        }
-        else {
-            if(second == 0) {
-                return false;
-            }
-            else {
-                output = first % second;
-                return true;
-            }
-        }
     }
 
 }   // namespace utopia::core

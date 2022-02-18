@@ -85,7 +85,7 @@ std::string utopia::core::get_last_system_error_msg() {
     }
     else {
 
-        LPSTR     win_error_msg_buffer = nullptr;
+        LPSTR       win_error_msg_buffer = nullptr;
 
         auto        size = ::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER |
                                         FORMAT_MESSAGE_FROM_SYSTEM |
@@ -93,7 +93,7 @@ std::string utopia::core::get_last_system_error_msg() {
                                     nullptr,
                                     win_error_code,
                                     0,
-                                    win_error_msg_buffer,
+            reinterpret_cast<LPSTR>(& win_error_msg_buffer),
                                     0,
                                     nullptr);
 

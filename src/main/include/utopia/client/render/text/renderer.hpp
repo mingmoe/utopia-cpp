@@ -30,6 +30,7 @@
 namespace utopia::client::render::text {
 
     /// @brief 字体渲染器。此类的抽象级别较低，仅仅输出位图。
+    /// 得为每一个Face构造一个渲染器。
     class Renderer {
       private:
 
@@ -41,10 +42,11 @@ namespace utopia::client::render::text {
       public:
 
         ~Renderer()                     = default;
-        Renderer(const Renderer &)      = default;
-        Renderer(Renderer &&)           = default;
-        Renderer               &operator=(const Renderer &) = default;
-        Renderer               &operator=(Renderer &&) = default;
+
+        Renderer(const Renderer &)      = delete;
+        Renderer(Renderer &&)           = delete;
+        Renderer &operator=(const Renderer &) = delete;
+        Renderer &operator=(Renderer &&) = delete;
 
         /// @brief 根据字符编码获取字体id
         /// @param unicode_code unicode字符编码
@@ -58,7 +60,8 @@ namespace utopia::client::render::text {
         /// @return 渲染后的位图
         utopia::client::render::Bitmap render(uint32_t id);
 
-
+        /// @brief 构造一个Renderer
+        /// @param face 要使用的字体
         [[nodiscard]] static inline std::shared_ptr<Renderer>
             create(std::shared_ptr<Face> face) {
             return std::shared_ptr<Renderer>(new Renderer{ face });   // NOLINT

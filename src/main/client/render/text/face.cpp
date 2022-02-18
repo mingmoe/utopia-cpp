@@ -12,7 +12,11 @@
 #include <utopia/client/render/text/error.hpp>
 #include <utopia/client/render/text/face.hpp>
 
-void utopia::client::render::text::Face::set_size(int x, int y, double point) {
+void utopia::client::render::text::Face::set_size(int x, int y, float point) {
+    x_size_ = x;
+    y_size_ = y;
+    point_  = point;
+
     // 设置磅值
     hb_font_set_ptem(this->hb_font_.get(), static_cast<float>(point));
 
@@ -29,7 +33,12 @@ void utopia::client::render::text::Face::set_size(int x, int y, double point) {
 
     // 设置像素大小
     hb_font_set_ppem(this->hb_font_.get(), x, y);
+
     ft_error_code = FT_Set_Pixel_Sizes(*ft_face_.get(), x, y);
 
     assert_freetype_error(ft_error_code);
+
+    // 这个值将会影响输出
+    // 但是我们并不知道他是如何工作的
+    hb_font_set_scale(hb_font_.get(), x, y);
 }

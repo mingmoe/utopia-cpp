@@ -23,7 +23,7 @@
 
 namespace utopia::client::render {
 
-    /// @brief 位图中的每一位
+    /// @brief 位图中的每一位。RGBA。
     struct BitmapBit {
         uint8_t red{ 0 };
         uint8_t green{ 0 };

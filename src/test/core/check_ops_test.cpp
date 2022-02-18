@@ -68,11 +68,3 @@ TEST(Core, SafeMulTest) {
     EXPECT_FALSE(result);
 }
 
-TEST(Core, SafeDivTest) {
-    const constexpr auto max = std::numeric_limits<signed>::max();
-    signed               opt{ 0 };
-
-    auto                 result = utopia::core::safe_div(max, 0, opt);
-
-    EXPECT_FALSE(result);
-}
