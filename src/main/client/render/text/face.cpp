@@ -38,7 +38,7 @@ void utopia::client::render::text::Face::set_size(int x, int y, float point) {
 
     assert_freetype_error(ft_error_code);
 
-    // 这个值将会影响输出
-    // 但是我们并不知道他是如何工作的
+    // 设置字体的比例为这个像素大小
+    // ref:https://github.com/harfbuzz/harfbuzz/discussions/3453#discussioncomment-2206597
     hb_font_set_scale(hb_font_.get(), x, y);
 }

@@ -10,4 +10,3 @@ function(u_add_freetype_library)
     target_link_libraries(${ARGV} PRIVATE freetype)
 endfunction(u_add_freetype_library)
 
-list(APPEND U_3RD_LIBRARY_FUNCTION_LIST "u_add_freetype_library | ${CMAKE_CURRENT_LIST_FILE}")

@@ -14,4 +14,3 @@ function(u_add_google_test)
     gtest_discover_tests(${ARGV})
 endfunction(u_add_google_test)
 
-list(APPEND U_3RD_LIBRARY_FUNCTION_LIST "u_add_google_test | ${CMAKE_CURRENT_LIST_FILE}")

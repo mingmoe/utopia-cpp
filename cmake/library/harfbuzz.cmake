@@ -7,8 +7,6 @@
 find_package(harfbuzz CONFIG REQUIRED)
 
 function(u_add_harfbuzz_library)
-    target_include_directories(${ARGV} PRIVATE harfbuzz harfbuzz::harfbuzz)
+    target_include_directories(${ARGV} SYSTEM PRIVATE harfbuzz harfbuzz::harfbuzz)
     target_link_libraries(${ARGV} PRIVATE harfbuzz harfbuzz::harfbuzz)
 endfunction(u_add_harfbuzz_library)
-
-list(APPEND U_3RD_LIBRARY_FUNCTION_LIST "u_add_harfbuzz_library | ${CMAKE_CURRENT_LIST_FILE}")

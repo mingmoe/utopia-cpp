@@ -68,26 +68,14 @@ else() # for gcc\clang
     unset(U__TEMP__FLAGS_RELEASE)
 endif()
 
-# 第三方编译选项列表
-set(U_COMPILE_OPTIONS_INFO_LIST "")
 
 # 引入第三方选项
 file(GLOB_RECURSE U_COMPILE_OPTIONS_SETTINGS "${U_CMAKE_MODULE_DIR}/options/*")
 
 foreach(OPTION IN LISTS U_COMPILE_OPTIONS_SETTINGS)
     message(STATUS "loading compiler options from:${OPTION}")
-    u_include(${OPTION})
+    u_include_at_root(${OPTION})
 endforeach()
 
 unset(U_COMPILE_OPTIONS_SETTINGS)
 
-# 打印信息
-message(STATUS "//==--- utopia compiler options ---==//")
-message(STATUS "定义变量为ON来启用编译选项")
-message(STATUS "option | usage | from")
-foreach(OPTION IN LISTS U_COMPILE_OPTIONS_INFO_LIST)
-    message(STATUS ${OPTION})
-endforeach()
-message(STATUS "//==--- utopia compiler options ---==//")
-
-unset(U_COMPILE_OPTIONS_INFO_LIST)

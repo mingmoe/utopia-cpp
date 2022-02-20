@@ -33,6 +33,3 @@ elseif(WIN32)
 else()
     u_add_platform_define("UTOPIA_IN_APPLE")
 endif()
-
-list(APPEND U_COMPILE_OPTIONS_INFO_LIST 
-"必须开启，否则编译错误 | 为各种平台定义宏 | ${CMAKE_CURRENT_LIST_FILE}")

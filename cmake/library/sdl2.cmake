@@ -12,5 +12,3 @@ find_package(sdl2-mixer CONFIG REQUIRED)
 function(u_add_sdl2_library)
     target_link_libraries(${ARGV} PRIVATE SDL2::SDL2 SDL2::SDL2main SDL2::SDL2_gfx SDL2::SDL2_image SDL2::SDL2_mixer)
 endfunction(u_add_sdl2_library)
-
-list(APPEND U_3RD_LIBRARY_FUNCTION_LIST "u_add_sdl2_library | ${CMAKE_CURRENT_LIST_FILE}")

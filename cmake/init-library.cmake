@@ -21,6 +21,9 @@ else()
     set(U_VCPKG_SOURCE "https://github.com/microsoft/vcpkg")
 endif()
 
+# 我们使用静态链接 :-)
+set(VCPKG_LIBRARY_LINKAGE "static")
+
 # clone
 message(STATUS "clone/update vcpkg from ${U_VCPKG_SOURCE}, wait...")
 

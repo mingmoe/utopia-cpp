@@ -31,6 +31,10 @@ set(U_CLIENT_HEADER_FILE
     "${U_MAIN_INCLUDE_DIR}/utopia/client/render/sdl/surface.hpp"
     "${U_MAIN_INCLUDE_DIR}/utopia/client/render/sdl/texture.hpp"
     "${U_MAIN_INCLUDE_DIR}/utopia/client/render/sdl/sdl.hpp"
+
+    
+    "${U_MAIN_INCLUDE_DIR}/utopia/client/render/ui/drawable.hpp"
+    "${U_MAIN_INCLUDE_DIR}/utopia/client/render/ui/ui.hpp"
 )
 set(U_CLIENT_TOTAL_FILE ${U_CLIENT_SOURCE_FILE} ${U_CLIENT_HEADER_FILE})
 
@@ -40,6 +44,7 @@ source_group(TREE ${U_MAIN_SOURCE_DIR} FILES ${U_CLIENT_HEADER_FILE})
 # 添加目标
 add_executable(
     ${U_PROJECT_CLIENT}
+    WIN32
     ${U_CLIENT_TOTAL_FILE}
 )
 

@@ -10,7 +10,7 @@ find_package(
 )
 
 function(u_add_boost_library)
-    target_include_directories(${ARGV} PUBLIC ${Boost_INCLUDE_DIRS})
+    target_include_directories(${ARGV} SYSTEM PUBLIC ${Boost_INCLUDE_DIRS})
 
     if(NOT MSVC)
         message(STATUS "note:build without msvc need link libbacktrace with link argument -lbacktrace")
@@ -23,4 +23,3 @@ function(u_add_boost_library)
     endif()
 endfunction(u_add_boost_library)
 
-list(APPEND U_3RD_LIBRARY_FUNCTION_LIST "u_add_boost_library | ${CMAKE_CURRENT_LIST_FILE}")
