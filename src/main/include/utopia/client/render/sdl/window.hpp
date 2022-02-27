@@ -50,7 +50,7 @@ namespace utopia::client::render::sdl {
                                        width,
                                        height,
                                        flag);
-            null_then_throw_sdl_exception(handle_);
+            check_sdl_nullptr_error(handle_);
         }
 
         ~Window() noexcept {

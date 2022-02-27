@@ -82,11 +82,18 @@ u_include_at_root("${U_CMAKE_MODULE_DIR}/config_header.cmake")
 
 u_add_subdirectory_at_root("${U_UTOPIA_SOURCE_DIR}")
 
+
 # 添加cmake自定义项目
 # 这主要用于IDE管理cmake文件
+
+source_group(TREE ${CMAKE_SOURCE_DIR} PREFIX CMake FILES ${U_TOTAL_CMAKE_FILES})
+
+# 添加config.hpp到cmake自定义项目
+# note:这些项目不被分组
+list(APPEND U_TOTAL_CMAKE_FILES "${U_CONFIG_HEADER_SOURCE}")
+list(APPEND U_TOTAL_CMAKE_FILES "${U_CONFIG_HEADER_OUTPUT}")
+
 add_custom_target(
     "${U_PROJECT}-cmake"
     SOURCES ${U_TOTAL_CMAKE_FILES}
 )
-
-source_group(TREE ${CMAKE_SOURCE_DIR} PREFIX CMake FILES ${U_TOTAL_CMAKE_FILES})

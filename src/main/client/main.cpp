@@ -22,6 +22,7 @@
 
     #include <utopia/client/render/sdl/sdl.hpp>
     #include <utopia/client/render/text/text.hpp>
+#include <utopia/core/debug.hpp>
 
 static auto source = utopia::client::render::text::FileFontSource::create(
     "C:\\Users\\mingm\\Project\\utopia\\build\\src\\main\\client\\Debug\\font.ttf");
@@ -38,10 +39,11 @@ static auto renderer = utopia::client::render::text::Renderer::create(face);
 static auto shaper   = utopia::client::render::text::Shaper::create();
 
 std::unique_ptr<utopia::client::render::sdl::Texture>
-    get_font(char32_t id, utopia::client::render::sdl::Renderer &render) {
+    get_font(char32_t code, utopia::client::render::sdl::Renderer &render) {
 
     face->set_size(50, 50, 14);
 
+    auto                                 id     = renderer->get_glyph_id(code);
     auto                                 bitmap = renderer->render(id);
 
     utopia::client::render::sdl::Surface surface{
@@ -65,60 +67,32 @@ std::unique_ptr<utopia::client::render::sdl::Texture>
 /// @return 程序返回值。如果正常退出返回0，否则返回非0值；
 int main(int /*argc*/, char * /*argv*/[]) {
 
-    utopia::client::render::sdl::Window   window{ "PHP", 1024, 768 };
+    utopia::client::render::sdl::Window   window{ "😅", 1024, 768 };
 
-    utopia::client::render::sdl::Renderer renderer{ window.get_ptr() };
+    utopia::client::render::sdl::Renderer w_renderer{ window.get_ptr() };
 
-    // 排版
-    shaper->add_text(UNICODE_STRING_SIMPLE("😅😅😅"), 0, -1);
+    std::vector<std::unique_ptr<utopia::client::render::sdl::Texture>> bitmaps;
 
-    shaper->set_direction_left_to_right(true);
-    shaper->set_language("en-US");
-    shaper->set_script("215");
+    bitmaps.push_back(std::move(get_font('😅', w_renderer)));
 
-    auto result = shaper->shape(face);
-
-    std::vector<std::pair<std::unique_ptr<utopia::client::render::sdl::Texture>,
-                          SDL_Rect>>
-        text_results{};
-
-    for(auto &signle_char : result) {
-        auto font = get_font(signle_char.glyph_index, renderer);
-        auto goes = SDL_Rect{};
-
-        //goes.x    = signle_char.x_advance;
-        //goes.y    = signle_char.y_advance;
-        goes.x = 50;
-
-        text_results.push_back(std::make_pair(std::move(font), goes));
-    }
-
-    SDL_Rect texture_rect;
-    texture_rect.x        = 50;   // the x coordinate
-    texture_rect.y        = 50;   // the y coordinate
-    texture_rect.w        = 50;   // the width of the texture
-    texture_rect.h        = 50;   // the height of the texture
-
-    SDL_Rect current_rect = texture_rect;
+    SDL_Rect current_rect{};
+    current_rect.x = 50;
+    current_rect.y = 50;
+    current_rect.w = 500;
+    current_rect.h = 500;
 
     while(true) {
 
-        SDL_RenderClear(renderer.get_ptr());
+        SDL_RenderClear(w_renderer.get_ptr());
 
-        for(auto &s_char : text_results) {
-            auto texture = &s_char.first;
-            auto pos     = &s_char.second;
-
-            SDL_RenderCopy(renderer.get_ptr(),
-                           texture->get()->get_ptr(),
+        for(auto &s_char : bitmaps) {
+            SDL_RenderCopy(w_renderer.get_ptr(),
+                           s_char->get_ptr(),
                            NULL,
                            &current_rect);
-
-            current_rect.x += pos->x;
         }
-        current_rect = texture_rect;
 
-        SDL_RenderPresent(renderer.get_ptr());
+        SDL_RenderPresent(w_renderer.get_ptr());
     }
 
     return 0;

@@ -48,7 +48,7 @@ namespace utopia::client::render::text {
 
         Library() : freetype_(new FT_Library{}, &deleteFreeTypeLibrary) {
             auto error = FT_Init_FreeType(freetype_.get());
-            assert_freetype_error(error);
+            check_freetype_error(error);
         }
 
       public:

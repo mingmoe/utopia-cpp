@@ -8,6 +8,7 @@ set(
     U_CORE_SOURCE_FILE
     "${CMAKE_CURRENT_SOURCE_DIR}/exception.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/assert.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/debug.cpp"
 )
 
 set(
@@ -18,6 +19,10 @@ set(
     "${U_MAIN_INCLUDE_DIR}/utopia/core/check_ops.hpp"
     "${U_MAIN_INCLUDE_DIR}/utopia/core/concepts.hpp"
     "${U_MAIN_INCLUDE_DIR}/utopia/core/guard.hpp"
+    "${U_MAIN_INCLUDE_DIR}/utopia/core/temp_util.hpp"
+    "${U_MAIN_INCLUDE_DIR}/utopia/core/debug.hpp"
+
+    "${U_MAIN_INCLUDE_DIR}/utopia/core/i18n/icu.hpp"
 )
 set(U_CORE_TOTAL_FILE ${U_CORE_SOURCE_FILE} ${U_CORE_HEADER_FILE})
 

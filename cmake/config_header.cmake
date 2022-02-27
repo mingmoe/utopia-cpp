@@ -7,9 +7,12 @@
 # Copyright (c) 2020-2022 moe-org All rights reserved.
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-set(U_CONFIG_HEADER_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/config.hpp")
-set(U_CONFIG_HEADER_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/utopia-configured-header")
-set(U_CONFIG_HEADER_OUTPUT "${U_CONFIG_HEADER_INCLUDE_DIR}/utopia-configured.hpp")
+set(U_CONFIG_HEADER_SOURCE 
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/config.hpp")
+set(U_CONFIG_HEADER_INCLUDE_DIR 
+    "${CMAKE_CURRENT_BINARY_DIR}/utopia-configed/include")
+set(U_CONFIG_HEADER_OUTPUT 
+    "${U_CONFIG_HEADER_INCLUDE_DIR}/utopia/config/configured.hpp")
 
 # 设置提示信息
 set(

@@ -46,6 +46,13 @@ namespace utopia::client::render::text {
         }
     }   // namespace
 
+    /// @brief 文本方向
+    enum class TextDirection
+    {
+        LeftToRight,
+        RightToLeft
+    };
+
     /// @brief 排版结果
     struct Glyph {
         int32_t x_advance{ 0 };
@@ -127,8 +134,8 @@ namespace utopia::client::render::text {
 
         /// @brief 设置语言方向
         /// @param left_to_right 如果为true则从左到右。如果设置为false则从右到左。
-        inline void set_direction_left_to_right(bool left_to_right) {
-            if(left_to_right) {
+        inline void set_direction(TextDirection direction) {
+            if(direction == TextDirection::LeftToRight) {
                 hb_buffer_set_direction(buffer_.get(), HB_DIRECTION_LTR);
             }
             else {
@@ -164,8 +171,13 @@ namespace utopia::client::render::text {
 
             return glyphs;
         }
+
+        /// @brief 清空塑性引擎状态
+        inline void reset() {
+            hb_buffer_reset(this->buffer_.get());
+        }
     };
-}   // namespace utopia::client::render::text
+}   // namespace utopia::inline client::inline render::inline text
 
 
 #endif

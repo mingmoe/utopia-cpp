@@ -34,7 +34,7 @@ namespace utopia::client::render::text {
     namespace {
         inline void delete_freetype_face(FT_Face *ptr) {
             auto err = FT_Done_Face(*ptr);
-            assert_freetype_error(err);
+            check_freetype_error(err);
         }
         inline void delete_harfbuzz_font(hb_font_t *ptr) {
             hb_font_destroy(ptr);
@@ -74,7 +74,7 @@ namespace utopia::client::render::text {
                 source->get_face_index(),
                 faced);
 
-            assert_freetype_error(err);
+            check_freetype_error(err);
 
             ft_face_.reset(faced, &delete_freetype_face);
 

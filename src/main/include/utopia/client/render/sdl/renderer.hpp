@@ -57,13 +57,13 @@ namespace utopia::client::render::sdl {
 
             handle_ = SDL_CreateRenderer(window, -1, flag);
 
-            null_then_throw_sdl_exception(handle_);
+            check_sdl_nullptr_error(handle_);
         }
 
         /// @brief 以surface为上下文创建渲染器
         Renderer(SDL_Surface     *surface) {
             handle_ = SDL_CreateSoftwareRenderer(surface);
-            null_then_throw_sdl_exception(handle_);
+            check_sdl_nullptr_error(handle_);
         }
 
 

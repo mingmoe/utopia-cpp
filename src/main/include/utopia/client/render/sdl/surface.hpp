@@ -44,7 +44,7 @@ namespace utopia::client::render::sdl {
             handle_ =
                 SDL_CreateRGBSurfaceWithFormat(0, width, height, depth, format);
 
-            null_then_throw_sdl_exception(handle_);
+            check_sdl_nullptr_error(handle_);
         }
 
 
@@ -68,7 +68,7 @@ namespace utopia::client::render::sdl {
             else {
                 error = SDL_SetSurfaceRLE(handle_, 0);
             }
-            nonzero_then_throw_sdl_exception(error);
+            check_sdl_nonzero_error(error);
         }
 
         /// @note 指针的生命周期同this。禁止用户手动释放此指针。
@@ -81,7 +81,7 @@ namespace utopia::client::render::sdl {
         [[nodiscard]] inline SurfaceGuard lock() {
             auto err = SDL_LockSurface(handle_);
 
-            nonzero_then_throw_sdl_exception(err);
+            check_sdl_nonzero_error(err);
 
             return SurfaceGuard{ this->handle_, &SDL_UnlockSurface };
         }

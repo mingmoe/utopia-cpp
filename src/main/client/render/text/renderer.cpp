@@ -33,11 +33,11 @@ utopia::client::render::Bitmap
 
     auto err         = FT_Load_Glyph(face, id, FT_LOAD_COLOR);
 
-    assert_freetype_error(err);
+    check_freetype_error(err);
 
     err = FT_Render_Glyph(glyph, FT_RENDER_MODE_NORMAL);
 
-    assert_freetype_error(err);
+    check_freetype_error(err);
 
     // 复制位图
     auto                           bitmap = glyph->bitmap;
@@ -72,8 +72,9 @@ utopia::client::render::Bitmap
             }
 
             row_index++;
-            width_index = 0;
             row_base += rate;
+            width_base = 0;
+            width_index = 0;
         }
     }
     else if(bitmap.pixel_mode == FT_PIXEL_MODE_GRAY) {

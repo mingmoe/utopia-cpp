@@ -23,7 +23,7 @@
 #include <string>
 #include <string_view>
 
-#include <utopia-configured.hpp>
+#include <utopia/core/temp_util.hpp>
 
 namespace utopia::core {
 
@@ -87,42 +87,25 @@ namespace utopia::core {
         boost::stacktrace::stacktrace stack_trace_{};   // 构造时的堆栈追踪
     };
 
-    // NOLINTBEGIN(*-macro-*)
 
-    // 用于定义一个新异常
-    // NOLINTNEXTLINE
-#define DEFINED_UTOPIA_EXCEPTION(exceptionName)                                \
-    class exceptionName##Exception : public utopia::core::Exception {          \
-      public:                                                                  \
-                                                                               \
-        exceptionName##Exception(const std::string          &msg,              \
-                                 const std::source_location &local =           \
-                                     std::source_location::current()) noexcept \
-            :                                                                  \
-            Exception(msg, local) {}                                           \
-                                                                               \
-        inline virtual std::string get_name() const noexcept override {        \
-            return std::string{ #exceptionName "Exception" };                  \
+    template<utopia::core::StringLiteral exception_name>
+    class UniversalException : public Exception {
+      public:
+
+        UniversalException(const std::string          &msg,
+                           const std::source_location &local =
+                               std::source_location::current()) noexcept :
+            Exception(msg, local) {}
+
+        inline virtual std::string get_name() const noexcept override {
+            return std::string{ exception_name.value };
         }
+    };
 
-
-#define DEFINED_UTOPIA_SIMPLE_EXCEPTION(exceptionName)                         \
-    DEFINED_UTOPIA_EXCEPTION(exceptionName)                                    \
-    }
-
-    /// @brief  参数为nullptr异常
-    // NOLINTNEXTLINE
-    DEFINED_UTOPIA_SIMPLE_EXCEPTION(IllegalArgument);
-
-    /// @brief  IO异常
-    // NOLINTNEXTLINE
-    DEFINED_UTOPIA_SIMPLE_EXCEPTION(IO);
-
-    /// @brief 超出范围异常
-    // NOLINTNEXTLINE
-    DEFINED_UTOPIA_SIMPLE_EXCEPTION(OutOfRange);
-
-    // NOLINTEND(*-macro-*)
+    using IllegalArgumentException =
+        UniversalException<"IllegalArgumentException">;
+    using IOException         = UniversalException<"IOException">;
+    using OutOfRangeException = UniversalException<"OutOfRangeException">;
 
     /// @brief  获取上一次系统错误的信息(errno()|GetLastError)。(strerror|FormatMessage)
     /// @return 适用于人类阅读的错误信息

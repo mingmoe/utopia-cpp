@@ -16,6 +16,7 @@
 #include <utopia/core/exception.hpp>
 
 #include <boost/stacktrace.hpp>
+#include <utopia/config/configured.hpp>
 
 using namespace std;
 using namespace utopia::core;
@@ -55,7 +56,7 @@ const char *Exception::what() const noexcept {
     return msg_.c_str();
 }
 
-#ifdef UTOPIA_IN_WINDOWS
+#ifdef UTOPIA_UNDER_WINDOWS
     #include <Windows.h>
 #endif
 
@@ -75,7 +76,7 @@ std::string utopia::core::get_last_system_error_msg() {
             << "):" << std::strerror(errno_code);
     }
 
-#ifdef UTOPIA_IN_WINDOWS
+#ifdef UTOPIA_UNDER_WINDOWS
     buf << "\n";
 
     auto win_error_code = ::GetLastError();

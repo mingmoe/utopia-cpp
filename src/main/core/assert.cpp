@@ -10,19 +10,23 @@
 //===-------------------------------------------------------===//
 
 #include <boost/stacktrace.hpp>
-#include <cstdio>
+#include <fmt/core.h>
 #include <iostream>
 #include <string_view>
 
 #include <utopia/core/assert.hpp>
-#include <fmt/core.h>
+#include <utopia/core/debug.hpp>
+#include <cstdlib>
 
 void utopia::core::u_assert(bool                 condition,
                             std::string_view     reason,
                             std::source_location source) {
     if(!condition) {
-        auto position = fmt::format("at {}(line {} column {})::{}", source.file_name(),
-            source.line(),source.column(),source.function_name());
+        auto position = fmt::format("at {}(line {} column {})::{}",
+                                    source.file_name(),
+                                    source.line(),
+                                    source.column(),
+                                    source.function_name());
 
         std::cerr << "utopia assert failed down!\n"
                   << reason << "\n"
@@ -34,6 +38,7 @@ void utopia::core::u_assert(bool                 condition,
 
         std::cerr << "//==---  call stack end  ---==//\n";
 
+        debug_break();
         std::abort();
     }
 }
@@ -41,5 +46,6 @@ void utopia::core::u_assert(bool                 condition,
 [[noreturn]] void utopia::core::failed(std::string_view     reason,
                                        std::source_location source) {
     utopia::core::u_assert(false, reason, source);
-    abort();
+    debug_break();
+    std::abort();
 }

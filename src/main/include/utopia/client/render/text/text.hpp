@@ -23,3 +23,4 @@
 #include <utopia/client/render/text/font.hpp>
 #include <utopia/client/render/text/renderer.hpp>
 #include <utopia/client/render/text/shaper.hpp>
+#include <utopia/client/render/text/engine.hpp>

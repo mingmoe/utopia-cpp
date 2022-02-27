@@ -31,7 +31,7 @@ namespace utopia::client::render::sdl {
         Texture(SDL_Surface *surface, SDL_Renderer *renderer) {
             handle_ = SDL_CreateTextureFromSurface(renderer, surface);
 
-            null_then_throw_sdl_exception(handle_);
+            check_sdl_nullptr_error(handle_);
         }
 
         /// @brief 从渲染上下文创建一个texture
@@ -49,7 +49,7 @@ namespace utopia::client::render::sdl {
             handle_ =
                 SDL_CreateTexture(renderer, format, access, width, height);
 
-            null_then_throw_sdl_exception(handle_);
+            check_sdl_nullptr_error(handle_);
         }
 
 

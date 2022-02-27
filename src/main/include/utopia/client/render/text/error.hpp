@@ -25,12 +25,14 @@
 
 namespace utopia::client::render::text {
 
-    DEFINED_UTOPIA_SIMPLE_EXCEPTION(Freetype);
-    DEFINED_UTOPIA_SIMPLE_EXCEPTION(Harfbuzz);
+    using FreetypeException =
+        utopia::core::UniversalException<"FreetypeException">;
+    using HarfbuzzException =
+        utopia::core::UniversalException<"HarfbuzzException">;
 
     /// @brief 如果错误代码不代表`成功`，则抛出freetype异常。
     /// @param error_code 错误代码
-    inline void assert_freetype_error(FT_Error error_code) {
+    inline void check_freetype_error(FT_Error error_code) {
         if(error_code != 0) {
             auto        err_info = FT_Error_String(error_code);
             std::string msg =
@@ -41,6 +43,6 @@ namespace utopia::client::render::text {
         }
     }
 
-}   // namespace utopia::client::text
+}   // namespace utopia::inline client::inline render::inline text
 
 #endif
