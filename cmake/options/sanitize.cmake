@@ -7,6 +7,8 @@
 # Copyright (c) 2020-2022 moe-org All rights reserved.
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+message(STATUS "check compile option:U_PUBLIC_OPTION_SANITIZE")
+
 if("${U_PUBLIC_OPTION_SANITIZE}" STREQUAL ON)
     message(STATUS "enable compiler option:sanitize")
 
@@ -28,16 +30,13 @@ if("${U_PUBLIC_OPTION_SANITIZE}" STREQUAL ON)
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${U_SANITIZE_OPTIONS}")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${U_SANITIZE_OPTIONS}")
 
-        unset(U_SANITIZE_OPTIONS)
-
     else()
         set(U_SANITIZE_OPTIONS "/fsanitize=address")
         set(U_SANITIZE_OPTIONS "${U_SANITIZE_OPTIONS} /fsanitize-address-use-after-return")
         
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${U_SANITIZE_OPTIONS}")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${U_SANITIZE_OPTIONS}")
-
-        unset(U_SANITIZE_OPTIONS)
     endif()
+    unset(U_SANITIZE_OPTIONS)
 endif()
 

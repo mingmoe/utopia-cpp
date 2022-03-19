@@ -21,6 +21,7 @@ set(
     "${U_MAIN_INCLUDE_DIR}/utopia/core/guard.hpp"
     "${U_MAIN_INCLUDE_DIR}/utopia/core/temp_util.hpp"
     "${U_MAIN_INCLUDE_DIR}/utopia/core/debug.hpp"
+    "${U_MAIN_INCLUDE_DIR}/utopia/core/source_location.hpp"
 
     "${U_MAIN_INCLUDE_DIR}/utopia/core/i18n/icu.hpp"
 )

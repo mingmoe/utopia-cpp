@@ -7,6 +7,8 @@
 # Copyright (c) 2020-2022 moe-org All rights reserved.
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+message(STATUS "check compile option:U_PUBLIC_COLORFUL_DIAGNOSTICS")
+
 if(NOT MSVC AND "${U_PUBLIC_COLORFUL_DIAGNOSTICS}" STREQUAL ON)
     message(STATUS "enable compiler option:colorful")
     

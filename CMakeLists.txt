@@ -7,8 +7,7 @@
 # Copyright (c) 2020-2022 moe-org All rights reserved.
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 # note for build system ADVENTURERS:
-# cmake files under cmake all is included at root
-# 
+# use u_include|u_add_subdirectory instead of include|add_subdirectory
 #=====--------------------------------------------------------------------
 cmake_minimum_required (VERSION 3.21)
 
@@ -24,7 +23,6 @@ macro(u_include_at_root INCLUDE_FILE_ARG)
     message(STATUS "include cmake:${INCLUDE_FILE}")
     
     list(APPEND U_TOTAL_CMAKE_FILES ${INCLUDE_FILE})
-    set(U_TOTAL_CMAKE_FILES ${U_TOTAL_CMAKE_FILES})
 
     include(${INCLUDE_FILE})
 
@@ -45,7 +43,6 @@ macro(u_add_subdirectory_at_root SUBDIR_ARG)
     message(STATUS "include subdirectory:${SUBDIR}/CMakeLists.txt")
 
     list(APPEND U_TOTAL_CMAKE_FILES "${SUBDIR}/CMakeLists.txt")
-    set(U_TOTAL_CMAKE_FILES ${U_TOTAL_CMAKE_FILES})
 
     add_subdirectory(${SUBDIR})
 
@@ -63,7 +60,6 @@ endmacro()
 # 引入项目模块
 u_include_at_root("${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.cmake")
 u_include_at_root("${CMAKE_CURRENT_SOURCE_DIR}/cmake/define.cmake")
-u_include_at_root("${U_CMAKE_MODULE_DIR}/init-library.cmake")
 
 project(${U_PROJECT} VERSION ${U_VERSION} LANGUAGES CXX C)
 
@@ -77,11 +73,13 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 # 引入项目
 u_include_at_root("${U_CMAKE_MODULE_DIR}/checker.cmake")
 u_include_at_root("${U_CMAKE_MODULE_DIR}/options.cmake")
-u_include_at_root("${U_CMAKE_MODULE_DIR}/import-library.cmake")
+u_include_at_root("${U_CMAKE_MODULE_DIR}/library.cmake")
 u_include_at_root("${U_CMAKE_MODULE_DIR}/config_header.cmake")
 
 u_add_subdirectory_at_root("${U_UTOPIA_SOURCE_DIR}")
 
+u_include_at_root("${U_CMAKE_MODULE_DIR}/install.cmake")
+u_include_at_root("${U_CMAKE_MODULE_DIR}/pack.cmake")
 
 # 添加cmake自定义项目
 # 这主要用于IDE管理cmake文件
@@ -97,3 +95,4 @@ add_custom_target(
     "${U_PROJECT}-cmake"
     SOURCES ${U_TOTAL_CMAKE_FILES}
 )
+

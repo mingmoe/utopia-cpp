@@ -17,6 +17,6 @@ namespace utopia::core {
     /// @brief 触发debug中断
     void debug_break();
 
-}
+}   // namespace utopia::core
 
 #endif

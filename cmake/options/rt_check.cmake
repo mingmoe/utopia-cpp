@@ -7,6 +7,8 @@
 # Copyright (c) 2020-2022 moe-org All rights reserved.
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+message(STATUS "check compile option:U_PUBLIC_OPTION_RT_CHECK")
+
 if("${U_PUBLIC_OPTION_RT_CHECK}" STREQUAL ON AND "${U_PUBLIC_OPTION_SANITIZE}" STREQUAL ON)
     message(FATAL_ERROR "运行时检查和地址消毒不兼容!")
 endif()

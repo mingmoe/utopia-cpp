@@ -8,7 +8,7 @@
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 set(U_CONFIG_HEADER_SOURCE 
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/config.hpp")
+    "${CMAKE_SOURCE_DIR}/src/config.hpp")
 set(U_CONFIG_HEADER_INCLUDE_DIR 
     "${CMAKE_CURRENT_BINARY_DIR}/utopia-configed/include")
 set(U_CONFIG_HEADER_OUTPUT 

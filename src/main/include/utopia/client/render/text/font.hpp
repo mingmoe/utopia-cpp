@@ -31,7 +31,7 @@ namespace utopia::client::render::text {
         inline void delete_harfbuzz_blob(hb_blob_t *ptr) {
             hb_blob_destroy(ptr);
         }
-        inline void delete_harfbuzz_face(hb_face_t* ptr) {
+        inline void delete_harfbuzz_face(hb_face_t *ptr) {
             hb_face_destroy(ptr);
         }
     }   // namespace
@@ -41,17 +41,17 @@ namespace utopia::client::render::text {
     class Font {
       private:
 
-        const uint16_t              face_index_;
         std::shared_ptr<FontSource> source_{ nullptr };
-        std::shared_ptr<Library>    library_{ nullptr };
         std::shared_ptr<hb_blob_t>  hb_blob_{ nullptr };
         std::shared_ptr<hb_face_t>  hb_face_{ nullptr };
+        std::shared_ptr<Library>    library_{ nullptr };
+        const uint16_t              face_index_;
 
         Font(std::shared_ptr<FontSource> source,
              std::shared_ptr<Library>    library,
              uint16_t                    face_index) :
             source_(source),
-            face_index_(face_index), library_(library) {
+            library_(library), face_index_(face_index) {
 
             // harfbuzz blob
             auto hb = hb_blob_create_or_fail(
@@ -103,8 +103,7 @@ namespace utopia::client::render::text {
             return this->hb_face_;
         }
 
-        [[nodiscard]] inline uint16_t
-            get_face_index() const noexcept {
+        [[nodiscard]] inline uint16_t get_face_index() const noexcept {
             return this->face_index_;
         }
 

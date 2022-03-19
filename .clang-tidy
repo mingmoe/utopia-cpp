@@ -16,7 +16,7 @@ Checks: >-
   -modernize-use-trailing-return-type,
   -readability-avoid-const-params-in-decls
 
-WarningsAsErrors: '*'
+WarningsAsErrors: ''
 HeaderFilterRegex: '^(<)|(")|()utopia/'
 AnalyzeTemporaryDtors: false
 FormatStyle:     file

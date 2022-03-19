@@ -14,10 +14,17 @@ set(U_VERSION "0.1.0")
 message(STATUS "utopia version:${U_VERSION}")
 
 # cmake模块目录
-set(U_CMAKE_MODULE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+set(U_CMAKE_MODULE_DIR "${CMAKE_SOURCE_DIR}/cmake")
 
 # 项目源码目录
-set(U_UTOPIA_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+set(U_UTOPIA_SOURCE_DIR "${CMAKE_SOURCE_DIR}/src")
+
+# 项目依赖源代码目录
+set(U_UTOPIA_DEPENDENCE_DIR "${CMAKE_SOURCE_DIR}/deps")
+set(U_UTOPIA_PREBUILT_DIR "${U_UTOPIA_DEPENDENCE_DIR}/prebuilt")
+set(U_UTOPIA_ANDROID_PRE_DIR "${U_UTOPIA_PREBUILT_DIR}/android")
+set(U_UTOPIA_WINDOWS_PRE_DIR "${U_UTOPIA_PREBUILT_DIR}/windows")
+set(U_UTOPIA_LINUX_PRE_DIR "${U_UTOPIA_PREBUILT_DIR}/linux")
 
 # 项目核心
 set(U_PROJECT_CORE "${U_PROJECT}_core")
@@ -31,5 +38,5 @@ set(U_PROJECT_TEST "${U_PROJECT}_test")
 # 服务器项目
 set(U_PROJECT_SERVER "${U_PROJECT}_server")
 
-# 第三方模块目录(vcpkg)
-set(U_LIBRARY_DIR "${CMAKE_SOURCE_DIR}/utopia-library")
+# 打包输出目录
+set(U_PACKAGE_OPT_DIR "${CMAKE_SOURCE_DIR}/package")

@@ -7,6 +7,7 @@
 # Copyright (c) 2020-2022 moe-org All rights reserved.
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+message(STATUS "check compile option:U_PUBLIC_COLORFUL_DIAGNOSTICS")
 
 if(MSVC)
     set(U_CONFIG_HEADER_SETTING_COMPILE "UTOPIA_USE_MSVC")

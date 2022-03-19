@@ -4,22 +4,18 @@
 # Copyright (c) 2020-2022 moe-org All rights reserved.
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-find_package(
-	Boost
-	REQUIRED
-)
+set(U_ENABLED_BOOST_LIB 
+"stacktrace" "config" "core" "winapi" "predef" "static_assert"
+"type_traits" "array" "assert" "throw_exception" "container_hash")
 
 function(u_add_boost_library)
-    target_include_directories(${ARGV} SYSTEM PUBLIC ${Boost_INCLUDE_DIRS})
+    foreach(B_LIB IN LISTS U_ENABLED_BOOST_LIB)
+        target_include_directories(${ARGV} SYSTEM PUBLIC 
+        "${U_UTOPIA_DEPENDENCE_DIR}/boost/libs/${B_LIB}/include")
+    endforeach()
 
-    if(NOT MSVC)
-        message(STATUS "note:build without msvc need link libbacktrace with link argument -lbacktrace")
-        message(STATUS "note:build without msvc need link libdl with link argument -ldl")
-       
-        target_link_libraries(${ARGV} PUBLIC "dl")
-        target_link_libraries(${ARGV} PUBLIC "backtrace")
-
-        target_compile_definitions(${ARGV} PUBLIC BOOST_STACKTRACE_USE_BACKTRACE)
+    # for linux,link dl
+    if(U_UNDER_LINUX)
+        target_link_libraries(${ARGV} PUBLIC dl)
     endif()
 endfunction(u_add_boost_library)
-

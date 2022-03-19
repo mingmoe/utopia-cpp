@@ -16,7 +16,7 @@
     #error this file is only compiled in client of utopia
 #endif
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <type_traits>
 
 #include <utopia/core/exception.hpp>

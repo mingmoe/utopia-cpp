@@ -57,7 +57,7 @@ std::unique_ptr<utopia::client::render::sdl::Texture>
         surface.get_ptr(),
         render.get_ptr());
 
-    return std::move(texture);
+    return texture;
 }
 
 
@@ -73,7 +73,7 @@ int main(int /*argc*/, char * /*argv*/[]) {
 
     std::vector<std::unique_ptr<utopia::client::render::sdl::Texture>> bitmaps;
 
-    bitmaps.push_back(std::move(get_font('😅', w_renderer)));
+    bitmaps.push_back(get_font(U'😅', w_renderer));
 
     SDL_Rect current_rect{};
     current_rect.x = 50;

@@ -4,8 +4,8 @@
 # Copyright (c) 2020-2022 moe-org All rights reserved.
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-find_package(fmt CONFIG REQUIRED)
+add_subdirectory("${U_UTOPIA_DEPENDENCE_DIR}/fmt" EXCLUDE_FROM_ALL)
 
 function(u_add_fmt_library)
- target_link_libraries(${ARGV} PRIVATE fmt::fmt)
+    target_link_libraries(${ARGV} PRIVATE fmt::fmt-header-only)
 endfunction(u_add_fmt_library)

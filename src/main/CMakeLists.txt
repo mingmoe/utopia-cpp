@@ -21,6 +21,7 @@ function(u_add_standard_options)
     u_add_boost_library(${ARGV})
     u_include_configure_header(${ARGV})
     u_add_fmt_library(${ARGV})
+    u_add_icu_library(${ARGV})
     target_include_directories(
         ${ARGV}
         PUBLIC

@@ -95,15 +95,17 @@ namespace utopia::client::render {
         Bitmap &operator=(const Bitmap &origin){
             this->clear_and_resize(origin.get_x_size(), origin.get_y_size());
 
-            for(auto x = 0; x != this->x_size_; x++) {
-                for(auto y = 0; y != this->x_size_; y++) {
+            for(decltype(this->x_size_) x = 0; x != this->x_size_; x++) {
+                for(decltype(this->x_size_) y = 0; y != this->x_size_; y++) {
                     write_point(x, y, origin.get_point(x, y));
                 }
             }
+
+            return *this;
         }
 
         Bitmap(Bitmap &&origin) noexcept {
-            *this = std::move(origin);
+            *this = origin;
         }
 
         Bitmap &operator=(Bitmap &&origin) noexcept {
@@ -179,7 +181,7 @@ namespace utopia::client::render {
         /// @param y_size y轴大小
         inline void clear_and_resize(uint64_t x_size, uint64_t y_size) {
             this->~Bitmap();
-            *this = std::move(Bitmap{ x_size, y_size });
+            *this = Bitmap{ x_size, y_size };
         }
     };
 

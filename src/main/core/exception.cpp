@@ -9,20 +9,19 @@
 /// 这个文件实现了utopia::core::Exception
 //===-----------------------------------------------------===//
 
+#include <boost/stacktrace.hpp>
 #include <mutex>
 #include <sstream>
 
+#include <utopia/config/configured.hpp>
 #include <utopia/core/convert.hpp>
 #include <utopia/core/exception.hpp>
-
-#include <boost/stacktrace.hpp>
-#include <utopia/config/configured.hpp>
 
 using namespace std;
 using namespace utopia::core;
 
 Exception::Exception(const std::string          &msg,
-                     const std::source_location &local) noexcept :
+                     const utopia::core::SourceLocation &local) noexcept :
     line_(local.line()),
     file_(local.file_name()), msg_(msg),
     stack_trace_(boost::stacktrace::stacktrace()) {}
@@ -86,17 +85,17 @@ std::string utopia::core::get_last_system_error_msg() {
     }
     else {
 
-        LPSTR       win_error_msg_buffer = nullptr;
+        LPSTR win_error_msg_buffer = nullptr;
 
-        auto        size = ::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER |
-                                        FORMAT_MESSAGE_FROM_SYSTEM |
-                                        FORMAT_MESSAGE_IGNORE_INSERTS,
-                                    nullptr,
-                                    win_error_code,
-                                    0,
-            reinterpret_cast<LPSTR>(& win_error_msg_buffer),
-                                    0,
-                                    nullptr);
+        auto  size                 = ::FormatMessageA(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
+                FORMAT_MESSAGE_IGNORE_INSERTS,
+            nullptr,
+            win_error_code,
+            0,
+            reinterpret_cast<LPSTR>(&win_error_msg_buffer),
+            0,
+            nullptr);
 
         std::string message(win_error_msg_buffer, size);
 

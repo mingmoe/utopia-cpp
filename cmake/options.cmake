@@ -8,7 +8,7 @@
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 # clang tidy设置
-if("${UTOPIA_PUBLIC_ENABLE_CLANG_TIDY}" STREQUAL ON)
+if(UTOPIA_PUBLIC_ENABLE_CLANG_TIDY)
     function(u_open_clang_tidy)
         set(CMAKE_CXX_CLANG_TIDY 
             ${UTOPIA_PUBLIC_CLANG_TIDY_PATH}
@@ -21,10 +21,8 @@ else()
 endif()
 
 function(u_close_clang_tidy)
-    if(DEFINED CMAKE_CXX_CLANG_TIDY)
-        unset(CMAKE_CXX_CLANG_TIDY)
-        unset(CMAKE_CXX_CLANG_TIDY PARENT_SCOPE)
-    endif()
+    unset(CMAKE_CXX_CLANG_TIDY)
+    unset(CMAKE_CXX_CLANG_TIDY PARENT_SCOPE)
 endfunction(u_close_clang_tidy)
 
 u_close_clang_tidy()
@@ -51,14 +49,15 @@ if(MSVC) # for msvc
 else() # for gcc\clang
 
     set(U__TEMP__FLAGS_ "-Wall -Wextra -Werror")
+
     set(U__TEMP__FLAGS_DEBUG "-O0 -g3 -ggdb")
-    set(U__TEMP__FLAGS_RELEASE "-O3 -g0 -DNDEBUG")
+    set(U__TEMP__FLAGS_RELEASE "-O3 -g1 -DNDEBUG")
 
     set(CMAKE_C_FLAGS "${U__TEMP__FLAGS_} -std=c11")
     set(CMAKE_C_FLAGS_DEBUG "${U__TEMP__FLAGS_DEBUG}")
     set(CMAKE_C_FLAGS_RELEASE "${U__TEMP__FLAGS_RELEASE}")
 
-    set(CMAKE_CXX_FLAGS "${U__TEMP__FLAGS_} -std=c++20 -fcxx-exceptions")
+    set(CMAKE_CXX_FLAGS "${U__TEMP__FLAGS_} -std=c++20 -frtti")
     set(CMAKE_CXX_FLAGS_DEBUG "${U__TEMP__FLAGS_DEBUG}")
     set(CMAKE_CXX_FLAGS_RELEASE "${U__TEMP__FLAGS_RELEASE}")
 

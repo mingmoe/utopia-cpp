@@ -7,7 +7,7 @@
 # Copyright (c) 2020-2022 moe-org All rights reserved.
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-# 不再定义max\min宏（来自傻逼windows.h)
+# 不再定义max\min宏（来自傻逼的windows.h)
 if(MSVC)
     message(STATUS "enable compiler option:nomaxmin")
 

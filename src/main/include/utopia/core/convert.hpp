@@ -24,6 +24,34 @@
 
 namespace utopia::core {
 
+    /// @brief      安全整数转换。只支持相同的符号。
+    /// @param from 输入
+    /// @param to    输出。如果转换失败则不操作。
+    /// @return     如果转换成功则返回true，否则返回false。
+    template<std::integral TO, std::integral FROM>
+    constexpr inline bool safe_number_cast(FROM input, TO &output) {
+        static_assert(
+            std::numeric_limits<TO>::is_signed ==
+                std::numeric_limits<FROM>::is_signed,
+            "safeNumberCast只允许相同的符号进行转换！请使用safeSignCast进行不同符号的转换。");
+
+        if(std::numeric_limits<TO>::is_signed) {
+            if(static_cast<intmax_t>(input) > std::numeric_limits<TO>::max() ||
+               static_cast<intmax_t>(input) < std::numeric_limits<TO>::min()) {
+                return false;
+            }
+        }
+        else {
+            if(static_cast<uintmax_t>(input) > std::numeric_limits<TO>::max() ||
+               static_cast<uintmax_t>(input) < std::numeric_limits<TO>::min()) {
+                return false;
+            }
+        }
+
+        output = static_cast<TO>(input);
+        return true;
+    }
+
     /// @brief      安全的无符号数到有符号数之间的转换。
     /// @param input 输入
     /// @param output 输出。如果转换失败则不赋值。
@@ -51,36 +79,9 @@ namespace utopia::core {
         if(input < 0) {
             return false;
         }
-        return safe_number_cast<TO, uintmax_t>(static_cast<uintmax_t>(input),
+        return safe_number_cast<TO, uintmax_t>(
+            static_cast<uintmax_t>(input),
                                              output);
-    }
-
-    /// @brief      安全整数转换。只支持相同的符号。
-    /// @param from 输入
-    /// @param to    输出。如果转换失败则不操作。
-    /// @return     如果转换成功则返回true，否则返回false。
-    template<std::integral TO, std::integral FROM>
-    constexpr inline bool safe_number_cast(FROM input, TO &output) {
-        static_assert(
-            std::numeric_limits<TO>::is_signed ==
-                std::numeric_limits<FROM>::is_signed,
-            "safeNumberCast只允许相同的符号进行转换！请使用safeSignCast进行不同符号的转换。");
-
-        if(std::numeric_limits<TO>::is_signed) {
-            if(static_cast<intmax_t>(input) > std::numeric_limits<TO>::max() ||
-               static_cast<intmax_t>(input) < std::numeric_limits<TO>::min()) {
-                return false;
-            }
-        }
-        else {
-            if(static_cast<uintmax_t>(input) > std::numeric_limits<TO>::max() ||
-               static_cast<uintmax_t>(input) < std::numeric_limits<TO>::min()) {
-                return false;
-            }
-        }
-
-        output = static_cast<TO>(input);
-        return true;
     }
 
     /// @brief          安全的整数转换。转换失败则退出程序。输入和输出可以拥有任意符号。

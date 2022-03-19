@@ -14,9 +14,9 @@
 #define UTOPIA_CORE_ASSERT_HPP
 
 #include <concepts>
-#include <source_location>
 #include <string_view>
 #include <type_traits>
+#include <utopia/core/source_location.hpp>
 
 namespace utopia::core {
 
@@ -28,14 +28,16 @@ namespace utopia::core {
     void
         u_assert(bool                 condition,
                  std::string_view     reason,
-                 std::source_location source = std::source_location::current());
+                  const utopia::core::SourceLocation &source =
+                      utopia::core::SourceLocation::current());
 
     /// @brief          快速失败。等价于void uassert(false, std::string_view);
     /// @param source 源代码位置
     /// @param reason   失败的原因。
     [[noreturn]] void
         failed(std::string_view     reason,
-               std::source_location source = std::source_location::current());
+                             const utopia::core::SourceLocation &source =
+                                 utopia::core::SourceLocation::current());
 
 }   // namespace utopia::core
 

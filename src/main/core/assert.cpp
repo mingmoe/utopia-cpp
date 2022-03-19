@@ -10,17 +10,17 @@
 //===-------------------------------------------------------===//
 
 #include <boost/stacktrace.hpp>
+#include <cstdlib>
 #include <fmt/core.h>
 #include <iostream>
 #include <string_view>
 
 #include <utopia/core/assert.hpp>
 #include <utopia/core/debug.hpp>
-#include <cstdlib>
 
-void utopia::core::u_assert(bool                 condition,
-                            std::string_view     reason,
-                            std::source_location source) {
+void utopia::core::u_assert(bool                                condition,
+                            std::string_view                    reason,
+                            const utopia::core::SourceLocation &source) {
     if(!condition) {
         auto position = fmt::format("at {}(line {} column {})::{}",
                                     source.file_name(),
@@ -43,8 +43,9 @@ void utopia::core::u_assert(bool                 condition,
     }
 }
 
-[[noreturn]] void utopia::core::failed(std::string_view     reason,
-                                       std::source_location source) {
+[[noreturn]] void
+    utopia::core::failed(std::string_view                    reason,
+                         const utopia::core::SourceLocation &source) {
     utopia::core::u_assert(false, reason, source);
     debug_break();
     std::abort();

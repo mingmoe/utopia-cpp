@@ -19,10 +19,10 @@
 #include <exception>
 #include <fmt/core.h>
 #include <memory>
-#include <source_location>
 #include <string>
 #include <string_view>
 
+#include <utopia/core/source_location.hpp>
 #include <utopia/core/temp_util.hpp>
 
 namespace utopia::core {
@@ -38,9 +38,9 @@ namespace utopia::core {
         /// @brief 构造一个异常
         /// @param msg 异常信息，在构造时将会被复制。
         /// @param local 构造异常的源代码位置
-        Exception(const std::string          &msg,
-                  const std::source_location &local =
-                      std::source_location::current()) noexcept;
+        Exception(const std::string                  &msg,
+                  const utopia::core::SourceLocation &local =
+                      utopia::core::SourceLocation::current()) noexcept;
 
         // define some default functions
         Exception(const Exception &) = delete;
@@ -79,12 +79,11 @@ namespace utopia::core {
       private:
 
         // 这些数据不应该在构造函数之外修改
-        std::string msg_{ nullptr };    // utf-8信息字符串，非空
-        std::string file_{ nullptr };   // 文件名称，可空
+        uint64_t    line_;   // 行号，为0则视为未知行号
+        std::string file_;   // 文件名称，可空
+        std::string msg_;    // utf-8信息字符串，非空
 
-        uint64_t    line_{ 0 };   // 行号，为0则视为未知行号
-
-        boost::stacktrace::stacktrace stack_trace_{};   // 构造时的堆栈追踪
+        boost::stacktrace::stacktrace stack_trace_;   // 构造时的堆栈追踪
     };
 
 
@@ -92,9 +91,10 @@ namespace utopia::core {
     class UniversalException : public Exception {
       public:
 
-        UniversalException(const std::string          &msg,
-                           const std::source_location &local =
-                               std::source_location::current()) noexcept :
+        UniversalException(const std::string                  &msg,
+                           const utopia::core::SourceLocation &local =
+                               utopia::core::SourceLocation::current()) noexcept
+            :
             Exception(msg, local) {}
 
         inline virtual std::string get_name() const noexcept override {

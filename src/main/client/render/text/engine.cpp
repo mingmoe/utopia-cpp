@@ -17,7 +17,7 @@
 using namespace utopia::client::render;
 using namespace utopia::client::render::text;
 
-[[nodiscard]] void Engine::add_font(uint64_t              priority,
+void Engine::add_font(uint64_t              priority,
                                     std::shared_ptr<Face> font) {
 
     auto it = this->font_list_.find(priority);

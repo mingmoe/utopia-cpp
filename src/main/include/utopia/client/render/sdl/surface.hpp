@@ -17,7 +17,7 @@
     #error this file is only compiled in client of utopia
 #endif
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <utopia/core/guard.hpp>
 #include <utopia/client/render/sdl/error.hpp>
 #include <utopia/client/render/bitmap.hpp>

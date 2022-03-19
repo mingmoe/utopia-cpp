@@ -46,16 +46,16 @@ namespace utopia::client::render::text {
     class Face {
       private:
 
-        std::shared_ptr<Library>   library_{ nullptr };
         std::shared_ptr<Font>      source_{ nullptr };
         std::shared_ptr<FT_Face>   ft_face_{ nullptr };
         std::shared_ptr<hb_font_t> hb_font_{ nullptr };
+        std::shared_ptr<Library>   library_{ nullptr };
 
         int                        x_size_{ 0 };
         int                        y_size_{ 0 };
         float                      point_{ 0 };
 
-        Face(std::shared_ptr<Font> source) :
+        explicit Face(std::shared_ptr<Font> source) :
             source_(source), library_(source->get_freetype_lib()) {
             // init harfbuzz
             auto hb_font = hb_font_create(source->get_harfbuzz_face().get());

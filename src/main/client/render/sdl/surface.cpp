@@ -18,8 +18,8 @@ void utopia::client::render::sdl::Surface::set_from_bitmap(Bitmap &bitmap) {
     if(this->handle_->format->format != SDL_PIXELFORMAT_RGBA8888) {
         throw SdlException{ "from utopia:unknown surface pixel format" };
     }
-    if(bitmap.get_x_size() != this->handle_->w ||
-       bitmap.get_y_size() != this->handle_->h) {
+    if(bitmap.get_x_size() != static_cast<uint64_t>(this->handle_->w) ||
+       bitmap.get_y_size() != static_cast<uint64_t>(this->handle_->h)) {
         throw SdlException{ "from utopia:bitmap size not match" };
     }
 
