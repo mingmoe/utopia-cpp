@@ -23,7 +23,7 @@ if(-not(Test-Path -Path "$prebuilt_dir/icu-linux.tgz" -PathType Leaf)){
     Invoke-WebRequest -Uri "https://github.com/unicode-org/icu/releases/download/release-70-1/icu4c-70_1-Ubuntu-20.04-x64.tgz" -OutFile "$prebuilt_dir/icu-linux.tgz"
 
     mkdir "$prebuilt_dir/icu-linux"
-    &tar -xvzf "$prebuilt_dir/icu-linux.tgz" -C "$prebuilt_dir/icu-linux"
+    &tar -xzf "$prebuilt_dir/icu-linux.tgz" -C "$prebuilt_dir/icu-linux"
 }
 else{
     Write-Host "skip icu-linux"
@@ -58,7 +58,7 @@ if(-not(Test-Path -Path "$prebuilt_dir/android.tar" -PathType Leaf)){
     Invoke-WebRequest -Uri "https://github.com/moe-org/utopia-binary/releases/download/v1.3/android.tar" -OutFile "$prebuilt_dir/android.tar"
 
     mkdir "$prebuilt_dir/android"
-    &tar -xvzf "$prebuilt_dir/android.tar" -C "$prebuilt_dir/android"
+    &tar -xzf "$prebuilt_dir/android.tar" -C "$prebuilt_dir/android"
 }
 else{
     Write-Host "skip android"
@@ -78,7 +78,7 @@ if(-not(Test-Path -Path "$prebuilt_dir/linux.tar" -PathType Leaf)){
     Invoke-WebRequest -Uri "https://github.com/moe-org/utopia-binary/releases/download/v1.3/linux.tar" -OutFile "$prebuilt_dir/linux.tar"
     
     mkdir "$prebuilt_dir/linux"
-    &tar -xvzf "$prebuilt_dir/linux.tar" -C "$prebuilt_dir/linux"
+    &tar -xzf "$prebuilt_dir/linux.tar" -C "$prebuilt_dir/linux"
 }
 else{
     Write-Host "skip linux"
