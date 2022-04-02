@@ -19,6 +19,12 @@ u_import_static_library(U_SDL2_MAIN
 function(u_add_sdl2_library)
     target_include_directories(${ARGV} SYSTEM PUBLIC ${U_DEPENDENCE_SDL_INCLUDE_DIR})
     target_link_libraries(${ARGV} PUBLIC U_SDL2 U_SDL2_MAIN)
+
+    
+    add_custom_command(TARGET ${ARGV} POST_BUILD 
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${U_UTOPIA_PREBUILT_DIR}/sdl-win/lib/x64/SDL2.dll"
+        $<TARGET_FILE_DIR:${ARGV}>)
 endfunction()
 
 function(u_install_sdl2)

@@ -16,6 +16,7 @@ set(U_CLIENT_SOURCE_FILE
 )
 set(U_CLIENT_HEADER_FILE
     "${U_MAIN_INCLUDE_DIR}/utopia/client/render/bitmap.hpp"
+    "${U_MAIN_INCLUDE_DIR}/utopia/client/render/sdl_context.hpp"
 
     "${U_MAIN_INCLUDE_DIR}/utopia/client/render/text/source.hpp"
     "${U_MAIN_INCLUDE_DIR}/utopia/client/render/text/font.hpp"

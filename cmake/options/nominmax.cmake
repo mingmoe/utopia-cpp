@@ -8,9 +8,7 @@
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 # 不再定义max\min宏（来自傻逼的windows.h)
-if(MSVC)
-    message(STATUS "enable compiler option:nomaxmin")
-
+if(DEFINED U_UNDER_WINDOWS)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /DNOMINMAX")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /DNOMINMAX")
 endif()

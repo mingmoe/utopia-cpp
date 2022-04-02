@@ -16,27 +16,29 @@
 
 #if defined(UTOPIA_UNDER_APPLE) || defined(UTOPIA_UNDER_LINUX)
     #include <csignal>
-    #include <cstdlib>
     #include <cstdio>
+    #include <cstdlib>
 #endif
 
-void utopia::core::debug_break() {
-#ifdef UTOPIA_USE_MSVC
+void utopia::core::debug_break([[maybe_unused]] const char *reason) {
+#ifdef UTOPIA_DEBUG_MODE
+    #ifdef UTOPIA_USE_MSVC
     __debugbreak();
-#endif
-
-#if defined(UTOPIA_USE_CLANG) || defined(UTOPIA_USE_GCC)
-
-    #if __has_builtin(__builtin_debugtrap)
-    __builtin_debugtrap();
-
-    #elif defined(SIGTRAP)
-    std::raise(SIGTRAP);
-
-    #else
-    std::printf("\ndebug break:abort()\n");
-    std::abort();
     #endif
 
+    #if defined(UTOPIA_USE_CLANG) || defined(UTOPIA_USE_GCC)
+
+        #if __has_builtin(__builtin_debugtrap)
+    __builtin_debugtrap();
+
+        #elif defined(SIGTRAP)
+    std::raise(SIGTRAP);
+
+        #else
+    std::printf("\ndebug break:abort()\n");
+    std::abort();
+        #endif
+
+    #endif
 #endif
 }

@@ -7,6 +7,8 @@
 u_close_clang_tidy()
 
 set(U_TEST_SOURCE_FILE 
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/i18n/icu.cpp"
+
     "${CMAKE_CURRENT_SOURCE_DIR}/core/convert_test.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/core/check_ops_test.cpp"
 )

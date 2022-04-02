@@ -55,7 +55,6 @@ namespace utopia::core {
             return std::string{ "UtopiaException" };
         }
 
-
         /// @brief 获取原始信息(即构造函数的msg参数)
         /// @return 原始信息的复制
         [[nodiscard]] inline virtual std::string
@@ -73,7 +72,8 @@ namespace utopia::core {
         virtual void print_to(std::ostream &output) const;
 
 
-        /// @brief  return value same as get_origin_msg().data();
+        /// @brief  return value same as get_msg().data();
+        /// @note 确保指针生命周期和异常生命周期相同
         [[nodiscard]] const char *what() const noexcept override;
 
       private:
@@ -82,8 +82,12 @@ namespace utopia::core {
         uint64_t    line_;   // 行号，为0则视为未知行号
         std::string file_;   // 文件名称，可空
         std::string msg_;    // utf-8信息字符串，非空
+        mutable std::unique_ptr<std::string> formatted_msg_;
 
         boost::stacktrace::stacktrace stack_trace_;   // 构造时的堆栈追踪
+
+        /// @brief 格式化信息并存储到formatted_msg_
+        void format_message() const;
     };
 
 

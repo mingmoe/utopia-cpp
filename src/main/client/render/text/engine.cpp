@@ -17,8 +17,7 @@
 using namespace utopia::client::render;
 using namespace utopia::client::render::text;
 
-void Engine::add_font(uint64_t              priority,
-                                    std::shared_ptr<Face> font) {
+void Engine::add_font(uint64_t priority, std::shared_ptr<Face> font) {
 
     auto it = this->font_list_.find(priority);
 
@@ -70,26 +69,38 @@ std::map<
 
 // 这个更是重量级
 [[nodiscard]] Bitmap Engine::render_paragraph(TextRenderInfo &para) {
-    // first, we shape
-    this->text_shaper_->reset();
-    this->text_shaper_->set_direction(para.para.direction);
-    this->text_shaper_->set_language(para.para.language);
-    this->text_shaper_->set_script(para.para.script);
-    this->text_shaper_->add_text(para.para.text,
-                                 para.para.paragraph_start_index,
-                                 para.para.paragraph_length);
-    auto        data = this->text_shaper_->shape(nullptr);
+    // 分行
+    std::vector<icu::UnicodeString> lines;
+    {
+        decltype(para.para.text.countChar32()) last_index = 0;
+        for(decltype(para.para.text.countChar32())
+                index = 0,
+                counts   = para.para.text.countChar32();
+            index != counts;
+            index++) {
+            auto c = para.para.text.char32At(index);
+
+            if(c == '\n') {
+                lines.push_back(std::move(
+                    para.para.text.tempSubStringBetween(index, last_index)));
+                last_index = index;
+            }
+        }
+
+        if(last_index != (para.para.text.countChar32()-1)) {
+            lines.push_back(std::move(
+                para.para.text.tempSubStringBetween(last_index)));
+        }
+    }
 
     UErrorCode  err = U_ZERO_ERROR;
 
     icu::Locale locale{ para.para.language.c_str() };
-    auto        brk = icu::BreakIterator::createWordInstance(locale, err);
+    auto        brk = icu::BreakIterator::createLineInstance(locale, err);
 
     core::i18n::check_icu_error_code(err);
 
     brk->setText(para.para.text);
-
-    
 
 
     return Bitmap{ 1, 1 };

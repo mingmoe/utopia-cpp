@@ -15,26 +15,43 @@
 #include <memory>
 
 #include <utopia/client/render/sdl/sdl.hpp>
+#include <utopia/client/render/sdl_context.hpp>
 #include <utopia/client/render/text/text.hpp>
 
-namespace utopia::inline client::inline render::inline ui {
+namespace utopia::client::render::ui {
 
     /// @brief 上下文
     class Context {
       private:
 
-        /// @brief 渲染窗口
-        std::shared_ptr<utopia::Window> window_;
-        /// @brief 渲染器
-        std::shared_ptr<utopia::sdl::Renderer> renderer_;
-        /// @brief 渲染引擎
-        std::shared_ptr<utopia::Engine> text_engine_;
+        std::shared_ptr<utopia::client::render::SdlRenderContext> context_;
+
+        Context(std::shared_ptr<utopia::client::render::SdlRenderContext> sdl) :
+            context_(sdl) {}
 
       public:
+
+        [[nodiscard]] inline static std::shared_ptr<Context> create(
+            std::shared_ptr<utopia::client::render::SdlRenderContext> sdl) {
+            return std::shared_ptr<Context>(new Context{ sdl });
+        }
+
+        ~Context()               = default;
+
+        Context(const Context &) = delete;
+        Context &operator=(const Context &) = delete;
+        Context(Context &&)                 = delete;
+        Context &operator=(Context &&) = delete;
+
+        [[nodiscard]] inline std::shared_ptr<
+            utopia::client::render::SdlRenderContext>
+            get_sdl_conetxt() {
+            return this->context_;
+        }
     };
 
 
-}   // namespace utopia::inline client::inline render::inline ui
+}   // namespace utopia::client::render::ui
 
 
 #endif

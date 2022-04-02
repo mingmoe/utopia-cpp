@@ -15,7 +15,8 @@
 namespace utopia::core {
 
     /// @brief 触发debug中断
-    void debug_break();
+    /// @note 在非debug模式下无操作
+    void debug_break([[maybe_unused]] const char *reason = nullptr);
 
 }   // namespace utopia::core
 

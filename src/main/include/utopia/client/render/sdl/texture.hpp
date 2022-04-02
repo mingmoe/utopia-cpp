@@ -17,6 +17,9 @@
     #error this file is only compiled in client of utopia
 #endif
 
+#include <utopia/core/pointer.hpp>
+#include <SDL.h>
+
 namespace utopia::client::render::sdl {
 
     /// @brief SDL_Surface封装
@@ -32,6 +35,11 @@ namespace utopia::client::render::sdl {
             handle_ = SDL_CreateTextureFromSurface(renderer, surface);
 
             check_sdl_nullptr_error(handle_);
+        }
+
+        /// @brief 从已有指针构造，将会转移所有权
+        Texture(utopia::core::MovedPointer<SDL_Texture>&& texture) {
+            this->handle_ = texture.release();
         }
 
         /// @brief 从渲染上下文创建一个texture

@@ -16,6 +16,7 @@
 #include <utopia/config/configured.hpp>
 #include <utopia/core/convert.hpp>
 #include <utopia/core/exception.hpp>
+#include <utopia/core/debug.hpp>
 
 using namespace std;
 using namespace utopia::core;
@@ -24,9 +25,31 @@ Exception::Exception(const std::string          &msg,
                      const utopia::core::SourceLocation &local) noexcept :
     line_(local.line()),
     file_(local.file_name()), msg_(msg),
-    stack_trace_(boost::stacktrace::stacktrace()) {}
+    stack_trace_(boost::stacktrace::stacktrace()) {
+    debug_break();
+}
 
 string Exception::get_msg() const {
+    format_message();
+    return *this->formatted_msg_;
+}
+
+void Exception::print_to(std::ostream &output) const {
+    format_message();
+    output << this->get_msg();
+}
+
+
+const char *Exception::what() const noexcept {
+    format_message();
+    return this->formatted_msg_->c_str();
+}
+
+void Exception::format_message() const {
+    if(this->formatted_msg_->length() != 0) {
+        return;
+    }
+
     std::ostringstream buf;
 
     // 输出异常信息
@@ -42,17 +65,10 @@ string Exception::get_msg() const {
     buf << boost::stacktrace::to_string(this->stack_trace_);
     buf << "=====  exception stack trace end  =====\n";
 
-    return buf.str();
-}
-
-void Exception::print_to(std::ostream &output) const {
-    auto msg = this->get_msg();
-    output.write(msg.data(), core::safe_convert<std::streamsize>(msg.length()));
-}
-
-
-const char *Exception::what() const noexcept {
-    return msg_.c_str();
+    this->formatted_msg_.release();
+    this->formatted_msg_ = std::move(std::make_unique<std::string>());
+    this->formatted_msg_->append(buf.str());
+    return;
 }
 
 #ifdef UTOPIA_UNDER_WINDOWS
@@ -81,7 +97,7 @@ std::string utopia::core::get_last_system_error_msg() {
     auto win_error_code = ::GetLastError();
 
     if(win_error_code == 0) {
-        buf << "not found windows error(code=0)";
+        buf << "no windows error(code=0)";
     }
     else {
 

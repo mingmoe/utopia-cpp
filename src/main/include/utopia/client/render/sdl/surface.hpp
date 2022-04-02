@@ -18,13 +18,16 @@
 #endif
 
 #include <SDL.h>
-#include <utopia/core/guard.hpp>
-#include <utopia/client/render/sdl/error.hpp>
+
 #include <utopia/client/render/bitmap.hpp>
+#include <utopia/client/render/sdl/error.hpp>
+#include <utopia/core/guard.hpp>
+#include <utopia/core/pointer.hpp>
 
 namespace utopia::client::render::sdl {
 
-    using SurfaceGuard = utopia::core::Guard<SDL_Surface, decltype(SDL_UnlockSurface)>;
+    using SurfaceGuard =
+        utopia::core::Guard<SDL_Surface, decltype(SDL_UnlockSurface)>;
 
     /// @brief SDL_Surface封装
     class Surface {
@@ -47,6 +50,10 @@ namespace utopia::client::render::sdl {
             check_sdl_nullptr_error(handle_);
         }
 
+        /// @brief 从已有指针构造，将会转移所有权
+        Surface(utopia::core::MovedPointer<SDL_Surface>&& surface) {
+            this->handle_ = surface.release();
+        }
 
         ~Surface() noexcept {
             SDL_FreeSurface(this->handle_);

@@ -14,9 +14,12 @@
 
 #include <fmt/core.h>
 #include <unicode/errorcode.h>
+#include <unicode/unistr.h>
+#include <vector>
 
 #include <utopia/core/assert.hpp>
 #include <utopia/core/exception.hpp>
+#include <unicode/schriter.h>
 
 namespace utopia::core::i18n {
 
@@ -33,6 +36,34 @@ namespace utopia::core::i18n {
 
             throw IcuExcpetion{ msg };
         }
+    }
+
+    /**
+     * @brief 将字符串根据换行符分割成行
+     * @param text 字符串
+     * @return 每一行字符串
+     * @note 返回的vector持有的是来自参数的临时字符串。即参数的tempSubString()调用。
+    */
+    inline std::vector<icu::UnicodeString>
+        split_line(icu::UnicodeString &text) {
+        // 分行
+        std::vector<icu::UnicodeString> lines;
+
+        icu::StringCharacterIterator    it{ text };
+
+        decltype(text.countChar32())    last_index = 0;
+
+        while(it.hasNext()) {
+            auto c = it.next32();
+            if(c == '\n') {
+                lines.push_back(text.tempSubStringBetween(last_index, it.getIndex()));
+                last_index = it.getIndex() + 1;
+            }
+        }
+        // add last line
+        lines.push_back(text.tempSubStringBetween(last_index));
+
+        return lines;
     }
 
 }   // namespace utopia::core::i18n

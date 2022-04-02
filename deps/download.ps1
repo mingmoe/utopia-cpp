@@ -1,6 +1,17 @@
 
+$ORIGIN_PWD = $PWD
+
+Set-Location "$PSScriptRoot"
+
 &git submodule init
-&git submodule update
+&git submodule update --recursive
+
+Set-Location "boost"
+
+&git submodule init
+&git submodule update --recursive
+
+Set-Location "$PSScriptRoot"
 
 $prebuilt_dir = (Convert-Path $PSScriptRoot) + "/prebuilt"
 
@@ -83,3 +94,5 @@ if(-not(Test-Path -Path "$prebuilt_dir/linux.tar" -PathType Leaf)){
 else{
     Write-Host "skip linux"
 }
+
+Set-Location $ORIGIN_PWD

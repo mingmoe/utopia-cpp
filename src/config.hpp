@@ -11,14 +11,6 @@
 // @this_file_is_waiting_to_be_configured_by_CMake@
 // =======================================
 
-// clang-format off
-#define @U_CONFIG_HEADER_SETTING_COMPILE@
-
-#define @U_CONFIG_HEADER_SETTING_SYSTEM@
-
-#define @CMAKE_BUILD_TYPE@
-// clang-format on
-
 namespace utopia::config {
 
     /**
