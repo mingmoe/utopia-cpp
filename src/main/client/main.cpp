@@ -56,8 +56,8 @@ int main(int /*argc*/, char * /*argv*/[]) {
     engine->add_font(1, font);
 
     TextRenderInfo info{};
-    info.para.text               = UNICODE_STRING_SIMPLE("海纳百川，有容乃大");
-    info.para.max_width_one_line = 200;
+    info.para.text               = UNICODE_STRING_SIMPLE("狡黠者鄙读书，无知者羡读书，唯明智之士用读书");
+    info.para.max_width_one_line = 1000;
     info.setting.point           = 14;
     info.setting.x_pixel         = 40;
     info.setting.y_pixel         = 40;
@@ -83,7 +83,7 @@ int main(int /*argc*/, char * /*argv*/[]) {
     rect.w = bitmap.get_x_size();
     rect.h = bitmap.get_y_size();
 
-    write_bitmap_as_chars(bitmap);
+    std::cout << write_bitmap_as_chars(bitmap);
 
 
     SDL_SetRenderDrawColor(render->get_ptr(), 255, 255, 255, 0);

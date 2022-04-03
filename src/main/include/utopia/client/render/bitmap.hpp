@@ -20,6 +20,7 @@
 #include <iostream>
 #include <span>
 #include <string>
+#include <sstream>
 
 #include <utopia/core/exception.hpp>
 
@@ -217,19 +218,21 @@ namespace utopia::client::render {
      * @param c 占位字符
      * @return 写后的字符串
     */
-    inline void write_bitmap_as_chars(Bitmap       &bitmap,
-                                      std::ostream &output = std::cout,
+    [[nodiscard]] inline std::string write_bitmap_as_chars(Bitmap &bitmap,
                                       char          c      = '*') {
+        std::ostringstream os{};
+
         for(uint64_t y = 0; y != bitmap.get_y_size(); y++) {
             for(uint64_t x = 0; x != bitmap.get_x_size(); x++) {
                 auto color = bitmap.get_point(x, y);
-                output << "\033[38;2;" << std::to_string(color.red) << ";"
+                os << "\033[38;2;" << std::to_string(color.red) << ";"
                        << std::to_string(color.green) << ";"
                        << std::to_string(color.blue) << "m" << c;
             }
-            output << "\n";
+            os << "\n";
         }
-        output << "\033[0m";
+        os << "\033[0m";
+        return os.str();
     }
 
 

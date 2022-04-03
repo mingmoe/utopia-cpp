@@ -129,14 +129,14 @@ utopia::client::render::text::GlyphInformation
 
     utopia::client::render::text::GlyphInformation info{};
     auto                                           metrics = glyph->metrics;
-    info.height                                            = metrics.height / 26.6;
-    info.width        = metrics.width / 26.6;
-    info.horiAdvance  = metrics.horiAdvance / 26.6;
-    info.horiBearingX = metrics.horiBearingX / 26.6;
-    info.horiBearingY = metrics.horiBearingY / 26.6;
-    info.vertAdvance  = metrics.vertAdvance / 26.6;
-    info.vertBearingX = metrics.vertBearingX / 26.6;
-    info.vertBearingY = metrics.vertBearingY / 26.6;
+    info.height       = static_cast<int64_t>(metrics.height / 26.6);
+    info.width        = static_cast<int64_t>(metrics.width / 26.6);
+    info.horiAdvance  = static_cast<int64_t>(metrics.horiAdvance / 26.6);
+    info.horiBearingX = static_cast<int64_t>(metrics.horiBearingX / 26.6);
+    info.horiBearingY = static_cast<int64_t>(metrics.horiBearingY / 26.6);
+    info.vertAdvance  = static_cast<int64_t>(metrics.vertAdvance / 26.6);
+    info.vertBearingX = static_cast<int64_t>(metrics.vertBearingX / 26.6);
+    info.vertBearingY = static_cast<int64_t>(metrics.vertBearingY / 26.6);
 
     return info;
 }

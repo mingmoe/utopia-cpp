@@ -15,9 +15,6 @@
 
 
 void utopia::client::render::sdl::Surface::set_from_bitmap(Bitmap &bitmap) {
-    if(this->handle_->format->format != SDL_PIXELFORMAT_RGBA8888) {
-        throw SdlException{ "from utopia:unknown surface pixel format" };
-    }
     if(bitmap.get_x_size() != static_cast<uint64_t>(this->handle_->w) ||
        bitmap.get_y_size() != static_cast<uint64_t>(this->handle_->h)) {
         throw SdlException{ "from utopia:bitmap size not match" };
@@ -28,21 +25,58 @@ void utopia::client::render::sdl::Surface::set_from_bitmap(Bitmap &bitmap) {
     // NOLINTNEXTLINE
     auto           buffer = reinterpret_cast<char *>(this->handle_->pixels);
 
+    const int      bpp    = this->handle_->format->BytesPerPixel;
+
+
     const uint64_t x      = bitmap.get_x_size();
     const uint64_t y      = bitmap.get_y_size();
 
-    const uint64_t rate   = this->handle_->pitch;
+    const uint64_t pitch  = this->handle_->pitch;
 
     for(uint64_t y_index = 0, y_base = 0; y_index != y;
-        y_index++, y_base += rate) {
-        for(uint64_t x_index = 0, x_base = 0; x_index != x;
-            x_index++, x_base += 4) {
-            auto bit                    = bitmap.get_point(x_index, y_index);
+        y_index++, y_base += pitch) {
 
-            buffer[y_base + x_base]     = bit.red;
-            buffer[y_base + x_base + 1] = bit.green;
-            buffer[y_base + x_base + 2] = bit.blue;
-            buffer[y_base + x_base + 3] = bit.alpha;
+        for(uint64_t x_index = 0, x_base = 0; x_index != x;
+            x_index++, x_base += bpp) {
+            auto     bit   = bitmap.get_point(x_index, y_index);
+
+            auto     value = SDL_MapRGBA(this->handle_->format,
+                                     bit.red,
+                                     bit.green,
+                                     bit.blue,
+                                     bit.alpha);
+            uint8_t *base_index =
+                reinterpret_cast<uint8_t *>(&buffer[y_base + x_base]);
+            uint16_t *buffer2 = reinterpret_cast<uint16_t *>(base_index);
+            uint32_t *buffer4 = reinterpret_cast<uint32_t *>(base_index);
+
+            switch(bpp) {
+                case 1:
+                    *base_index = (value & std::numeric_limits<uint8_t>::max());
+                    break;
+                case 2:
+                    *buffer2 = (value & std::numeric_limits<uint16_t>::max());
+                    break;
+                case 3:
+                    base_index[0] =
+                        (value & static_cast<uint32_t>(
+                                     std::numeric_limits<uint8_t>::max()));
+                    base_index[1] =
+                        (value &
+                         static_cast<uint32_t>(
+                             std::numeric_limits<uint8_t>::max() << 8)) >>
+                        8;
+                    base_index[2] =
+                        (value &
+                         static_cast<uint32_t>(
+                             std::numeric_limits<uint8_t>::max() << 16)) >>
+                        16;
+                    break;
+                case 4:
+                    *buffer4 = value;
+                default:
+                    break;
+            }
         }
     }
 }

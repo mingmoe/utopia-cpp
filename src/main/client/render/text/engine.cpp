@@ -9,7 +9,6 @@
 /// 这个文件实现了字体渲染引擎(utopia::client::Engine)。
 //===----------------------------------------------------------===//
 
-#include <iostream>
 #include <unicode/brkiter.h>
 #include <unicode/schriter.h>
 
@@ -18,7 +17,6 @@
 
 using namespace utopia::client::render;
 using namespace utopia::client::render::text;
-
 
 [[nodiscard]] std::pair<std::shared_ptr<Face>, std::shared_ptr<Renderer>>
     Engine::get_first_exist_glyph(uint32_t unicode_code, uint32_t &output_id) {
@@ -33,7 +31,6 @@ using namespace utopia::client::render::text;
 
         for(auto it = vec.cbegin(); it != vec.cend(); it++) {
             auto &renderer = it->second;
-            auto &face     = it->first;
 
             output_id      = renderer->get_glyph_id(unicode_code);
 
@@ -114,19 +111,20 @@ std::map<
 
 
     const auto max_width_one_line = para.para.max_width_one_line;
-    const auto space_size         = std::floor(para.setting.x_pixel / 2);
+    const auto space_size =
+        static_cast<uint32_t>(std::floor(para.setting.x_pixel / 2));
 
 
     std::vector<icu::UnicodeString> output_lines;
 
     // 开始断行
     for(auto &line : lines) {
-        std::remove_const_t<decltype(max_width_one_line)> width = 0;
+        int64_t                      width = 0;
 
-        icu::StringCharacterIterator                      it{ line };
+        icu::StringCharacterIterator it{ line };
 
-        UChar32                                           c{ 0 };
-        int32_t                                           last_index = 0;
+        UChar32                      c{ 0 };
+        int32_t                      last_index = 0;
 
         // 每个字符遍历
         while(c != it.DONE) {
@@ -164,18 +162,15 @@ std::map<
             std::move(line.tempSubStringBetween(last_index)));
     }
     // 渲染
-    Bitmap   bitmap{ max_width_one_line,
+    Bitmap  bitmap{ max_width_one_line,
                    output_lines.size() * para.setting.y_pixel };
 
-    uint32_t line_index{ 0 };
-
-    std::cout << "start renderer..." << std::endl;
+    int64_t line_index{ 0 };
 
     for(auto &line : output_lines) {
-        std::cout << "new line" << std::endl;
 
         icu::StringCharacterIterator it{ line };
-        uint32_t                     width_index{ 0 };
+        int64_t                      width_index{ 0 };
 
         UChar32                      c{ 0 };
 
@@ -190,18 +185,11 @@ std::map<
                 auto rendered = this->render(c, para.setting);
                 rendered.copy_into(bitmap, width_index, line_index);
 
-                std::cout << "render: `" << c << "` into (" << width_index
-                          << " : " << line_index << ")" << std::endl;
-                write_bitmap_as_chars(rendered);
-
                 width_index += rendered.get_x_size();
             }
         }
 
         line_index += para.setting.y_pixel;
-
-        std::cout << "line render result:" << std::endl;
-        write_bitmap_as_chars(bitmap);
     }
 
     return bitmap;
