@@ -22,9 +22,9 @@
 #include <unicode/unistr.h>
 
 #include <utopia/client/render/sdl/error.hpp>
+#include <utopia/core/convert.hpp>
 #include <utopia/core/i18n/icu.hpp>
 #include <utopia/core/pointer.hpp>
-#include <utopia/core/convert.hpp>
 
 namespace utopia::client::render::sdl {
 
@@ -33,8 +33,8 @@ namespace utopia::client::render::sdl {
       private:
 
         SDL_Window *handle_{ nullptr };
-        int         width_;
-        int         height_;
+        int         width_{ 0 };
+        int         height_{ 0 };
 
       public:
 
@@ -80,13 +80,14 @@ namespace utopia::client::render::sdl {
 
       public:
 
+        WindowBuilder()                      = default;
         WindowBuilder(const WindowBuilder &) = delete;
         WindowBuilder &operator=(const WindowBuilder &) = delete;
         WindowBuilder(WindowBuilder &&)                 = delete;
         WindowBuilder &operator=(WindowBuilder &&) = delete;
 
         inline void    set_size(uint32_t width, uint32_t height) noexcept {
-            this->width_ = width;
+            this->width_  = width;
             this->height_ = height;
         }
 
@@ -103,11 +104,11 @@ namespace utopia::client::render::sdl {
             }
         }
 
-        [[nodiscard]] inline Window create() {
+        [[nodiscard]] inline std::shared_ptr<Window> create() {
 
             std::unique_ptr<char[]> title_c{};
 
-            icu::StringByteSink sink{ new std::string{} };
+            icu::StringByteSink     sink{ new std::string{} };
 
             this->title_.toUTF8(sink);
 
@@ -119,7 +120,8 @@ namespace utopia::client::render::sdl {
                                            this->flag_);
             check_sdl_nullptr_error(window);
 
-            return Window{ utopia::core::move_ptr<SDL_Window>(window) };
+            return std::make_shared<Window>(
+                utopia::core::move_ptr<SDL_Window>(window));
         }
     };
 

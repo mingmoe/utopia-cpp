@@ -23,11 +23,27 @@
 #include <memory>
 #include <optional>
 
+#include <utopia/client/render/bitmap.hpp>
 #include <utopia/client/render/text/error.hpp>
 #include <utopia/client/render/text/face.hpp>
-#include <utopia/client/render/bitmap.hpp>
 
 namespace utopia::client::render::text {
+
+    /**
+     * @brief 字形信息
+     * @note https://freetype.org/freetype2/docs/reference/ft2-base_interface.html#ft_glyph_metrics
+    */
+    struct GlyphInformation {
+        int64_t width{ 0 };
+        int64_t height{ 0 };
+        int64_t horiBearingX{ 0 };
+        int64_t horiBearingY{ 0 };
+        int64_t horiAdvance{ 0 };
+        int64_t vertBearingX{ 0 };
+        int64_t vertBearingY{ 0 };
+        int64_t vertAdvance{ 0 };
+    };
+
 
     /// @brief 字体渲染器。此类的抽象级别较低，仅仅输出位图。
     /// 得为每一个Face构造一个渲染器。
@@ -41,10 +57,10 @@ namespace utopia::client::render::text {
 
       public:
 
-        ~Renderer()                     = default;
+        ~Renderer()                = default;
 
-        Renderer(const Renderer &)      = delete;
-        Renderer(Renderer &&)           = delete;
+        Renderer(const Renderer &) = delete;
+        Renderer(Renderer &&)      = delete;
         Renderer &operator=(const Renderer &) = delete;
         Renderer &operator=(Renderer &&) = delete;
 
@@ -60,6 +76,13 @@ namespace utopia::client::render::text {
         /// @return 渲染后的位图
         utopia::client::render::Bitmap render(uint32_t id);
 
+        /**
+         * @brief 获取字符信息
+         * @param id 字符id
+         * @return 字符信息
+        */
+        GlyphInformation               get_info(uint32_t id);
+
         /// @brief 构造一个Renderer
         /// @param face 要使用的字体
         [[nodiscard]] static inline std::shared_ptr<Renderer>
@@ -68,6 +91,6 @@ namespace utopia::client::render::text {
         }
     };
 
-}   // namespace utopia::client::text
+}   // namespace utopia::client::render::text
 
 #endif

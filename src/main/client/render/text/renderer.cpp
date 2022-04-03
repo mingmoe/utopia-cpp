@@ -73,7 +73,7 @@ utopia::client::render::Bitmap
 
             row_index++;
             row_base += rate;
-            width_base = 0;
+            width_base  = 0;
             width_index = 0;
         }
     }
@@ -112,4 +112,31 @@ utopia::client::render::Bitmap
     }
 
     return output;
+}
+
+
+utopia::client::render::text::GlyphInformation
+    utopia::client::render::text::Renderer::get_info(uint32_t id) {
+
+    auto face_shared = this->face_->get_ft_face();
+    auto face_ptr    = face_shared.get();
+    auto face        = *face_ptr;
+    auto glyph       = face->glyph;
+
+    auto err         = FT_Load_Glyph(face, id, FT_LOAD_COLOR);
+
+    check_freetype_error(err);
+
+    utopia::client::render::text::GlyphInformation info{};
+    auto                                           metrics = glyph->metrics;
+    info.height                                            = metrics.height / 26.6;
+    info.width        = metrics.width / 26.6;
+    info.horiAdvance  = metrics.horiAdvance / 26.6;
+    info.horiBearingX = metrics.horiBearingX / 26.6;
+    info.horiBearingY = metrics.horiBearingY / 26.6;
+    info.vertAdvance  = metrics.vertAdvance / 26.6;
+    info.vertBearingX = metrics.vertBearingX / 26.6;
+    info.vertBearingY = metrics.vertBearingY / 26.6;
+
+    return info;
 }

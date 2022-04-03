@@ -9,13 +9,49 @@
 /// 这个文件实现了字体渲染引擎(utopia::client::Engine)。
 //===----------------------------------------------------------===//
 
+#include <iostream>
 #include <unicode/brkiter.h>
+#include <unicode/schriter.h>
 
 #include <utopia/client/render/text/text.hpp>
 #include <utopia/core/i18n/icu.hpp>
 
 using namespace utopia::client::render;
 using namespace utopia::client::render::text;
+
+
+[[nodiscard]] std::pair<std::shared_ptr<Face>, std::shared_ptr<Renderer>>
+    Engine::get_first_exist_glyph(uint32_t unicode_code, uint32_t &output_id) {
+
+    // 防止我们在没有任何字体的情况下不返回0
+    output_id  = 0;
+
+    auto &list = this->font_list_;
+
+    for(auto p = list.cbegin(); p != list.cend(); p++) {
+        auto &vec = p->second;
+
+        for(auto it = vec.cbegin(); it != vec.cend(); it++) {
+            auto &renderer = it->second;
+            auto &face     = it->first;
+
+            output_id      = renderer->get_glyph_id(unicode_code);
+
+            if(output_id == 0) {
+                // not found
+                // next!
+                continue;
+            }
+
+            // found
+            return *it;
+        }
+    }
+
+    // not found for all face
+    return std::make_pair(std::shared_ptr<Face>{ nullptr },
+                          std::shared_ptr<Renderer>{ nullptr });
+}
 
 void Engine::add_font(uint64_t priority, std::shared_ptr<Face> font) {
 
@@ -41,67 +77,132 @@ std::map<
 
 [[nodiscard]] Bitmap Engine::render(uint32_t          unicode_code,
                                     TextRenderSetting settings) {
-    auto &list = this->font_list_;
 
-    for(auto p = list.cbegin(); p != list.cend(); p++) {
-        auto &vec = p->second;
+    uint32_t id{ 0 };
+    auto     face = this->get_first_exist_glyph(unicode_code, id);
 
-        for(auto it = vec.cbegin(); it != vec.cend(); it++) {
-            auto &renderer = it->second;
-            auto &face     = it->first;
-
-            auto  id       = renderer->get_glyph_id(unicode_code);
-
-            if(id == 0) {
-                // not found
-                // next!
-                continue;
-            }
-
-            // found, render
-            face->set_size(settings.x_pixel, settings.y_pixel, settings.point);
-            return renderer->render(id);
-        }
+    if(id != 0) {
+        face.first->set_size(settings.x_pixel,
+                             settings.y_pixel,
+                             settings.point);
+        return face.second->render(id);
     }
-
-    return Bitmap{ settings.x_pixel, settings.y_pixel };
+    else if(unicode_code != U'\uFFFD') {
+        // not found,return �
+        return render(U'\uFFFD', settings);
+    }
+    else {
+        // not found again,return empty
+        return Bitmap{ settings.x_pixel, settings.y_pixel };
+    }
 }
 
 // 这个更是重量级
+// 目前，我们没有为复杂脚本设计
+// 仅仅简单渲染简单脚本
 [[nodiscard]] Bitmap Engine::render_paragraph(TextRenderInfo &para) {
+
     // 分行
-    std::vector<icu::UnicodeString> lines;
-    {
-        decltype(para.para.text.countChar32()) last_index = 0;
-        for(decltype(para.para.text.countChar32())
-                index = 0,
-                counts   = para.para.text.countChar32();
-            index != counts;
-            index++) {
-            auto c = para.para.text.char32At(index);
+    auto lines = core::i18n::split_line(para.para.text);
 
-            if(c == '\n') {
-                lines.push_back(std::move(
-                    para.para.text.tempSubStringBetween(index, last_index)));
-                last_index = index;
-            }
-        }
-
-        if(last_index != (para.para.text.countChar32()-1)) {
-            lines.push_back(std::move(
-                para.para.text.tempSubStringBetween(last_index)));
-        }
-    }
-
+    // 准备断行
     UErrorCode  err = U_ZERO_ERROR;
 
     icu::Locale locale{ para.para.language.c_str() };
-    auto        brk = icu::BreakIterator::createLineInstance(locale, err);
 
     core::i18n::check_icu_error_code(err);
 
-    brk->setText(para.para.text);
+
+    const auto max_width_one_line = para.para.max_width_one_line;
+    const auto space_size         = std::floor(para.setting.x_pixel / 2);
 
 
-    return Bitmap{ 1, 1 };
+    std::vector<icu::UnicodeString> output_lines;
+
+    // 开始断行
+    for(auto &line : lines) {
+        std::remove_const_t<decltype(max_width_one_line)> width = 0;
+
+        icu::StringCharacterIterator                      it{ line };
+
+        UChar32                                           c{ 0 };
+        int32_t                                           last_index = 0;
+
+        // 每个字符遍历
+        while(c != it.DONE) {
+            c = it.next32PostInc();
+
+            if(width >= max_width_one_line) {
+                output_lines.push_back(std::move(
+                    line.tempSubStringBetween(last_index, it.getIndex())));
+                last_index = it.getIndex();
+                width      = 0;
+            }
+
+            if(c == ' ') {
+                width += space_size;
+            }
+            else {
+                uint32_t id{ 0 };
+                auto     face = this->get_first_exist_glyph(c, id);
+
+
+                if(id != 0) {
+                    face.first->set_size(para.setting.x_pixel,
+                                         para.setting.y_pixel,
+                                         para.setting.point);
+
+                    width += face.second->get_info(id).width;
+                }
+                else {
+                    width += para.setting.x_pixel;
+                }
+            }
+        }
+        // last line
+        output_lines.push_back(
+            std::move(line.tempSubStringBetween(last_index)));
+    }
+    // 渲染
+    Bitmap   bitmap{ max_width_one_line,
+                   output_lines.size() * para.setting.y_pixel };
+
+    uint32_t line_index{ 0 };
+
+    std::cout << "start renderer..." << std::endl;
+
+    for(auto &line : output_lines) {
+        std::cout << "new line" << std::endl;
+
+        icu::StringCharacterIterator it{ line };
+        uint32_t                     width_index{ 0 };
+
+        UChar32                      c{ 0 };
+
+        while(c != it.DONE) {
+            c = it.next32PostInc();
+
+            if(c == ' ') {
+                width_index += space_size;
+            }
+            else {
+
+                auto rendered = this->render(c, para.setting);
+                rendered.copy_into(bitmap, width_index, line_index);
+
+                std::cout << "render: `" << c << "` into (" << width_index
+                          << " : " << line_index << ")" << std::endl;
+                write_bitmap_as_chars(rendered);
+
+                width_index += rendered.get_x_size();
+            }
+        }
+
+        line_index += para.setting.y_pixel;
+
+        std::cout << "line render result:" << std::endl;
+        write_bitmap_as_chars(bitmap);
+    }
+
+    return bitmap;
 }

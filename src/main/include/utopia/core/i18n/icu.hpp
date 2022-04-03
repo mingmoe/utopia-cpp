@@ -14,12 +14,12 @@
 
 #include <fmt/core.h>
 #include <unicode/errorcode.h>
+#include <unicode/schriter.h>
 #include <unicode/unistr.h>
 #include <vector>
 
 #include <utopia/core/assert.hpp>
 #include <utopia/core/exception.hpp>
-#include <unicode/schriter.h>
 
 namespace utopia::core::i18n {
 
@@ -56,7 +56,8 @@ namespace utopia::core::i18n {
         while(it.hasNext()) {
             auto c = it.next32();
             if(c == '\n') {
-                lines.push_back(text.tempSubStringBetween(last_index, it.getIndex()));
+                lines.push_back(
+                    text.tempSubStringBetween(last_index, it.getIndex()));
                 last_index = it.getIndex() + 1;
             }
         }

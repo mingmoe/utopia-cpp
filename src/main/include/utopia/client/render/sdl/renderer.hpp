@@ -79,7 +79,14 @@ namespace utopia::client::render::sdl {
 
       public:
 
-        inline void set_preset_sync(bool enable) {
+        RendererBuilder()                        = default;
+        ~RendererBuilder()                       = default;
+        RendererBuilder(const RendererBuilder &) = delete;
+        RendererBuilder(RendererBuilder &&)      = delete;
+        RendererBuilder &operator=(const RendererBuilder &) = delete;
+        RendererBuilder &operator=(RendererBuilder &&) = delete;
+
+        inline void      set_preset_sync(bool enable) {
             if(enable) {
                 flag_ |= SDL_RENDERER_PRESENTVSYNC;
             }
@@ -116,14 +123,15 @@ namespace utopia::client::render::sdl {
             this->index_ = index;
         }
 
-        [[nodiscard]] inline Renderer create() {
+        [[nodiscard]] inline std::shared_ptr<Renderer> create() {
 
             auto handle =
                 SDL_CreateRenderer(this->win_->get_ptr(), index_, flag_);
 
             check_sdl_nullptr_error(handle);
 
-            return Renderer{ utopia::core::move_ptr<SDL_Renderer>(handle) };
+            return std::make_shared<Renderer>(
+                utopia::core::move_ptr<SDL_Renderer>(handle));
         }
     };
 

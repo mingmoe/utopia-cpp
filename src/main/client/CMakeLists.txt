@@ -50,11 +50,18 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX client FILES ${U_CLIENT_SOU
 source_group(TREE ${U_MAIN_SOURCE_DIR} FILES ${U_CLIENT_HEADER_FILE})
 
 # 添加目标
-add_executable(
+if(U_ANDROID_MODE)
+add_library(
     ${U_PROJECT_CLIENT}
-    WIN32
+    SHARED
     ${U_CLIENT_TOTAL_FILE}
 )
+else()
+add_executable(
+    ${U_PROJECT_CLIENT}
+    ${U_CLIENT_TOTAL_FILE}
+)
+endif()
 
 # 为特定的编译目标添加宏
 target_compile_definitions(${U_PROJECT_CLIENT} PUBLIC UTOPIA_PLATFORM_CLIENT)

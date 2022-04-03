@@ -29,6 +29,7 @@ namespace utopia::core {
         }
         MovedPointer &operator=(MovedPointer &&origin) {
             src_ = origin.release();
+            return *this;
         }
 
         MovedPointer(const MovedPointer &) = delete;
@@ -55,7 +56,7 @@ namespace utopia::core {
     };
 
     template<typename T>
-    MovedPointer<T> &&move_ptr(T *&p) {
+    MovedPointer<T> move_ptr(T *&p) {
         return std::move(MovedPointer<T>{ p });
     }
 

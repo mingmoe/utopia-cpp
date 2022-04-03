@@ -172,7 +172,7 @@ namespace utopia::client::render::text {
             return glyphs;
         }
 
-        /// @brief 清空塑性引擎状态
+        /// @brief 清空塑形引擎状态
         inline void reset() {
             hb_buffer_reset(this->buffer_.get());
         }

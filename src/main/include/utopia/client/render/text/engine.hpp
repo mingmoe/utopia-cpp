@@ -29,10 +29,9 @@ namespace utopia::client::render::text {
         std::string        script;
         TextDirection      direction;
         icu::UnicodeString text;
-        uint32_t           paragraph_start_index{ 0 };
-        uint32_t           paragraph_length{ 0 };
-        /// @brief 每行最大字符数，0表示无限制
-        uint32_t           max_characters_one_line{ 0 };
+        uint32_t           max_width_one_line{
+            std::numeric_limits<decltype(max_width_one_line)>::max()
+        };
     };
 
     /// @brief 字体渲染所需要的信息
@@ -98,10 +97,23 @@ namespace utopia::client::render::text {
             CompareFontPriority>
             get_font_list();
 
+        /**
+         * @brief 对于一个unicode代码点，获取第一个拥有该代码点对应字形的字体。
+         * @param unicode_code unicode代码点
+         * @param output_id 输出的id，如果没有找到任何一个字符有对应字形，返回0
+         * @return 如果找到，则返回找到的字体。
+        */
+        [[nodiscard]] std::pair<std::shared_ptr<Face>,
+                                std::shared_ptr<Renderer>>
+            get_first_exist_glyph(uint32_t unicode_code, uint32_t &output_id);
+
         /// @brief 渲染单个字符（注意:这不会使用排版引擎）
         /// @param unicode_code unicode代码点
         /// @param settings 字体效果
-        [[nodiscard]] Bitmap render(uint32_t unicode_code, TextRenderSetting settings);
+        /// @note 如果碰到没有找到的字符，使用U+FFFD代码点继续查找。
+        /// 还是找不到则返回空位图，大小同settings参数的pixel大小。
+        [[nodiscard]] Bitmap render(uint32_t          unicode_code,
+                                    TextRenderSetting settings);
 
         /// @brief 渲染一段字符串
         /// @param para 段落信息
