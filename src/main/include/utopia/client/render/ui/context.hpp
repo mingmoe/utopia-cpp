@@ -20,14 +20,16 @@
 
 namespace utopia::client::render::ui {
 
-    /// @brief 上下文
+    /// @brief 渲染上下文
     class Context {
       private:
 
         std::shared_ptr<utopia::client::render::SdlRenderContext> context_;
 
-        Context(std::shared_ptr<utopia::client::render::SdlRenderContext> sdl) :
-            context_(sdl) {}
+        std::shared_ptr<utopia::client::render::text::Engine>     text_engine_;
+
+        explicit Context(std::shared_ptr<utopia::client::render::SdlRenderContext> sdl) :
+            context_(sdl), text_engine_(text::Engine::create()) {}
 
       public:
 
@@ -45,9 +47,43 @@ namespace utopia::client::render::ui {
 
         [[nodiscard]] inline std::shared_ptr<
             utopia::client::render::SdlRenderContext>
-            get_sdl_conetxt() {
+            get_sdl_context() {
             return this->context_;
         }
+
+        [[nodiscard]] inline std::shared_ptr<
+            utopia::client::render::text::Engine>
+            get_text_engine() {
+            return this->text_engine_;
+        }
+
+        inline std::unique_ptr<sdl::Texture> render_to_texture(const Bitmap& bitmap) {
+            sdl::Surface surface{ bitmap.get_x_size(), bitmap.get_y_size() };
+
+            surface.set_from_bitmap(bitmap);
+
+            auto texture = std::make_unique<sdl::Texture>(
+                surface.get_ptr(),
+                this->get_sdl_context()->get_renderer()->get_ptr()
+            );
+
+            return texture;
+        }
+
+        inline void draw_texture(std::unique_ptr<sdl::Texture>& texture,
+            const Rectangle& pos) {
+            SDL_Rect rect{};
+            rect.x = pos.x;
+            rect.y = pos.y;
+            rect.w = pos.x_size;
+            rect.h = pos.y_size;
+
+            SDL_RenderCopy(this->get_sdl_context()->get_renderer()->get_ptr(),
+                           texture->get_ptr(),
+                           nullptr,
+                           &rect);
+        }
+
     };
 
 

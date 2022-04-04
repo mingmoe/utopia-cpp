@@ -90,7 +90,8 @@ std::map<
     }
     else {
         // not found again,return empty
-        return Bitmap{ settings.x_pixel, settings.y_pixel };
+        return Bitmap{ core::safe_convert<pos_t>(settings.x_pixel),
+                       core::safe_convert<pos_t>(settings.y_pixel) };
     }
 }
 
@@ -103,12 +104,6 @@ std::map<
     auto lines = core::i18n::split_line(para.para.text);
 
     // 准备断行
-    UErrorCode  err = U_ZERO_ERROR;
-
-    icu::Locale locale{ para.para.language.c_str() };
-
-    core::i18n::check_icu_error_code(err);
-
 
     const auto max_width_one_line = para.para.max_width_one_line;
     const auto space_size =
@@ -127,8 +122,8 @@ std::map<
         int32_t                      last_index = 0;
 
         // 每个字符遍历
-        while(c != it.DONE) {
-            c = it.next32PostInc();
+        while((c = it.next32PostInc()) != it.DONE) {
+
 
             if(width >= max_width_one_line) {
                 output_lines.push_back(std::move(
@@ -162,20 +157,20 @@ std::map<
             std::move(line.tempSubStringBetween(last_index)));
     }
     // 渲染
-    Bitmap  bitmap{ max_width_one_line,
-                   output_lines.size() * para.setting.y_pixel };
+    Bitmap bitmap{ core::safe_convert<pos_t>(max_width_one_line),
+                   core::safe_convert<pos_t>(output_lines.size() *
+                                             para.setting.y_pixel) };
 
-    int64_t line_index{ 0 };
+    pos_t  line_index{ 0 };
 
     for(auto &line : output_lines) {
 
         icu::StringCharacterIterator it{ line };
-        int64_t                      width_index{ 0 };
+        pos_t                        width_index{ 0 };
 
         UChar32                      c{ 0 };
 
-        while(c != it.DONE) {
-            c = it.next32PostInc();
+        while((c = it.next32PostInc()) != it.DONE) {
 
             if(c == ' ') {
                 width_index += space_size;

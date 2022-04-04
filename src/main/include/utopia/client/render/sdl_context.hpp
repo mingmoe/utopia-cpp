@@ -31,17 +31,16 @@ namespace utopia::client::render {
         std::shared_ptr<sdl::Window>   window_;
         std::shared_ptr<sdl::Renderer> renderer_;
 
-        SdlRenderContext(std::unique_ptr<sdl::Window>   window,
-                         std::unique_ptr<sdl::Renderer> renderer) {
-            window_.reset(window.release());
-            renderer_.reset(renderer.release());
-        }
+        SdlRenderContext(std::shared_ptr<sdl::Window>   window,
+                         std::shared_ptr<sdl::Renderer> renderer) :
+            window_(window),
+            renderer_(renderer) {}
 
       public:
 
         [[nodiscard]] inline static std::shared_ptr<SdlRenderContext>
-            create(std::unique_ptr<sdl::Window>   window,
-                   std::unique_ptr<sdl::Renderer> renderer) {
+            create(std::shared_ptr<sdl::Window>   window,
+                   std::shared_ptr<sdl::Renderer> renderer) {
             return std::shared_ptr<SdlRenderContext>(
                 new SdlRenderContext{ std::move(window), std::move(renderer) });
         }

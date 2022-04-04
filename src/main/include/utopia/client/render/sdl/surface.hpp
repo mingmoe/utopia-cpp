@@ -21,6 +21,7 @@
 
 #include <utopia/client/render/bitmap.hpp>
 #include <utopia/client/render/sdl/error.hpp>
+#include <utopia/client/render/defines.hpp>
 #include <utopia/core/guard.hpp>
 #include <utopia/core/pointer.hpp>
 
@@ -40,9 +41,9 @@ namespace utopia::client::render::sdl {
         /// @brief 创建一个新Surface
         /// @param width surface宽度
         /// @param height surface高度
-        Surface(int      width,
-                int      height,
-                int      depth  = 32,
+        Surface(pos_t      width,
+                pos_t    height,
+                pos_t    depth  = 32,
                 uint32_t format = SDL_PIXELFORMAT_RGBA8888) {
             handle_ =
                 SDL_CreateRGBSurfaceWithFormat(0, width, height, depth, format);
@@ -97,7 +98,7 @@ namespace utopia::client::render::sdl {
         /// @note 此函数需要surface的像素格式为SDL_PIXELFORMAT_RGBA8888。
         /// 否则会抛出SdlException。
         /// 如果surface和bitmap的大小不一样，也抛出SdlException。
-        void set_from_bitmap(Bitmap &bitmap);
+        void set_from_bitmap(const Bitmap &bitmap);
     };
 
 

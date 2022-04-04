@@ -9,8 +9,8 @@
 /// 声明了Shaper类。此类是对harfbuzz的封装，用于文本排版。
 //===------------------------------------------------------===//
 
-#ifndef UTOPIA_CLIENT_RENDER_TEXT_SHAPER_HPP
-#define UTOPIA_CLIENT_RENDER_TEXT_SHAPER_HPP
+#ifndef UTOPIA_CLIENT_RENDER_TEXT_SHARPER_HPP
+#define UTOPIA_CLIENT_RENDER_TEXT_SHARPER_HPP
 
 #ifndef UTOPIA_PLATFORM_CLIENT
     #error this file is only compiled in client of utopia

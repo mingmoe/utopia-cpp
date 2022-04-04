@@ -68,11 +68,11 @@ namespace utopia::client::render::text {
 
         std::shared_ptr<text::Library> library_{};
 
-        std::shared_ptr<text::Shaper>  text_shaper_;
+        std::shared_ptr<text::Shaper>  text_sharper_;
 
         Engine() {
             library_     = Library::create();
-            text_shaper_ = Shaper::create();
+            text_sharper_ = Shaper::create();
         }
 
       public:

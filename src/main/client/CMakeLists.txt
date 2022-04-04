@@ -17,6 +17,7 @@ set(U_CLIENT_SOURCE_FILE
 set(U_CLIENT_HEADER_FILE
     "${U_MAIN_INCLUDE_DIR}/utopia/client/render/bitmap.hpp"
     "${U_MAIN_INCLUDE_DIR}/utopia/client/render/sdl_context.hpp"
+    "${U_MAIN_INCLUDE_DIR}/utopia/client/render/defines.hpp"
 
     "${U_MAIN_INCLUDE_DIR}/utopia/client/render/text/source.hpp"
     "${U_MAIN_INCLUDE_DIR}/utopia/client/render/text/font.hpp"
@@ -42,6 +43,7 @@ set(U_CLIENT_HEADER_FILE
     "${U_MAIN_INCLUDE_DIR}/utopia/client/render/ui/label.hpp"
     "${U_MAIN_INCLUDE_DIR}/utopia/client/render/ui/input_box.hpp"
     "${U_MAIN_INCLUDE_DIR}/utopia/client/render/ui/context.hpp"
+    "${U_MAIN_INCLUDE_DIR}/utopia/client/render/ui/group.hpp"
     "${U_MAIN_INCLUDE_DIR}/utopia/client/render/ui/ui.hpp"
 )
 set(U_CLIENT_TOTAL_FILE ${U_CLIENT_SOURCE_FILE} ${U_CLIENT_HEADER_FILE})

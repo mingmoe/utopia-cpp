@@ -20,8 +20,7 @@
     #include <unicode/ustream.h>
     #include <vector>
 
-    #include <utopia/client/render/sdl/sdl.hpp>
-    #include <utopia/client/render/text/text.hpp>
+    #include <utopia/client/render/render.hpp>
     #include <utopia/core/convert.hpp>
     #include <utopia/core/debug.hpp>
 
@@ -51,39 +50,43 @@ int main(int /*argc*/, char * /*argv*/[]) {
     auto font = load_font(
         R"PATH(C:\Users\mingm\Project\utopia\build\src\main\client\Debug\unifont.ttf)PATH");
 
-    auto engine = Engine::create();
-
-    engine->add_font(1, font);
-
-    TextRenderInfo info{};
-    info.para.text               = UNICODE_STRING_SIMPLE("狡黠者鄙读书，无知者羡读书，唯明智之士用读书");
-    info.para.max_width_one_line = 1000;
-    info.setting.point           = 14;
-    info.setting.x_pixel         = 40;
-    info.setting.y_pixel         = 40;
-    auto            bitmap       = engine->render_paragraph(info);
-
     WindowBuilder   win_builder{};
     auto            win = win_builder.create();
 
     RendererBuilder renderer_builder{};
 
     renderer_builder.set_window(win);
-    auto    render = renderer_builder.create();
+    auto      render = renderer_builder.create();
 
-    Surface surface{ safe_convert<int>(bitmap.get_x_size()),
-                     safe_convert<int>(bitmap.get_y_size()) };
-    surface.set_from_bitmap(bitmap);
+    ui::Group group{};
+    auto      sdl_context = SdlRenderContext::create(win, render);
+    auto      context     = ui::Context::create(sdl_context);
 
-    Texture  texture{ surface.get_ptr(), render->get_ptr() };
+    context->get_text_engine()->add_font(1, font);
 
-    SDL_Rect rect{};
-    rect.x = 50;
-    rect.y = 50;
-    rect.w = bitmap.get_x_size();
-    rect.h = bitmap.get_y_size();
 
-    std::cout << write_bitmap_as_chars(bitmap);
+    auto           label = std::make_shared<ui::Label>();
+
+    TextRenderInfo info{};
+    info.para.text = UNICODE_STRING_SIMPLE(
+        "马之千里者，一食或尽粟一石。食马者不知其能千里而食也。是马也，虽有千里之能，食不饱，力不足，才美不外见，且欲与常马等不可得，安求其能千里也？");
+    info.para.max_width_one_line = 1000;
+    info.setting.point           = 14;
+    info.setting.x_pixel         = 40;
+    info.setting.y_pixel         = 40;
+
+    render::Rectangle rectangle{};
+    rectangle.x      = 50;
+    rectangle.y      = 50;
+    rectangle.x_size = 1000;
+    rectangle.y_size = 240;
+    label->set_pos(rectangle);
+    label->set_text(info);
+
+    group.add_item(label);
+
+
+    SDL_Event test_event;
 
 
     SDL_SetRenderDrawColor(render->get_ptr(), 255, 255, 255, 0);
@@ -91,7 +94,10 @@ int main(int /*argc*/, char * /*argv*/[]) {
     while(true) {
         SDL_RenderPresent(render->get_ptr());
         SDL_RenderClear(render->get_ptr());
-        SDL_RenderCopy(render->get_ptr(), texture.get_ptr(), nullptr, &rect);
+        group.draw(context);
+
+        while(SDL_PollEvent(&test_event)) {
+        }
     }
 
 

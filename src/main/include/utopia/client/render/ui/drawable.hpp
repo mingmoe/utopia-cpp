@@ -9,13 +9,12 @@
 /// 声明Drawable接口。此接口代表一个类可以被渲染。
 //===------------------------------------------------------------===//
 
-#ifndef UTOPIA_CLIENT_RENDER_UI_DRAWABLE
-#define UTOPIA_CLIENT_RENDER_UI_DRAWABLE
+#ifndef UTOPIA_CLIENT_RENDER_UI_DRAWABLE_HPP
+#define UTOPIA_CLIENT_RENDER_UI_DRAWABLE_HPP
 
-#include <utopia/client/render/sdl/renderer.hpp>
-#include <utopia/client/render/sdl/window.hpp>
+#include <utopia/client/render/ui/context.hpp>
 
-namespace utopia::inline client::inline render::inline ui {
+namespace utopia::client::render::ui {
 
     /// @brief 一个接口。代表可渲染组件。
     class Drawable {
@@ -29,9 +28,9 @@ namespace utopia::inline client::inline render::inline ui {
         Drawable &operator=(const Drawable &) = delete;
         Drawable &operator=(Drawable &&) = delete;
 
-        /// @brief 渲染目的地
-        virtual void draw_to(utopia::Window   &window,
-                             utopia::sdl::Renderer &renderer) = 0;
+        /// @brief 渲染
+        virtual void draw_to(
+            std::shared_ptr<utopia::client::render::ui::Context> context) = 0;
     };
 
 }   // namespace utopia::inline client::inline render::inline ui

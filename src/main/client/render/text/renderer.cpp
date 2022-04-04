@@ -17,21 +17,23 @@
 #include <utopia/core/convert.hpp>
 #include FT_FREETYPE_H
 
+using utopia::core::safe_convert;
+
 uint32_t utopia::client::render::text::Renderer::get_glyph_id(
     char32_t unicode_code) {
-    auto code =
+    const auto code =
         FT_Get_Char_Index(*this->face_->get_ft_face().get(), unicode_code);
     return code;
 }
 
 utopia::client::render::Bitmap
     utopia::client::render::text::Renderer::render(uint32_t id) {
-    auto face_shared = this->face_->get_ft_face();
-    auto face_ptr    = face_shared.get();
-    auto face        = *face_ptr;
-    auto glyph       = face->glyph;
+    const auto face_shared = this->face_->get_ft_face();
+    const auto face_ptr    = face_shared.get();
+    const auto face        = *face_ptr;
+    const auto glyph       = face->glyph;
 
-    auto err         = FT_Load_Glyph(face, id, FT_LOAD_COLOR);
+    auto       err         = FT_Load_Glyph(face, id, FT_LOAD_COLOR);
 
     check_freetype_error(err);
 
@@ -42,7 +44,8 @@ utopia::client::render::Bitmap
     // 复制位图
     auto                           bitmap = glyph->bitmap;
 
-    utopia::client::render::Bitmap output{ bitmap.width, bitmap.rows };
+    utopia::client::render::Bitmap output{ safe_convert<pos_t>(bitmap.width),
+                                           safe_convert<pos_t>(bitmap.rows) };
 
     // 解析格式
     // 我们只支持 FT_PIXEL_MODE_GRAY 和 FT_PIXEL_MODE_BGRA
@@ -52,7 +55,7 @@ utopia::client::render::Bitmap
         decltype(bitmap.width) width_index = 0;
         decltype(bitmap.width) width_base  = 0;
         const auto             rate        = bitmap.pitch;
-        auto                   buffer      = bitmap.buffer;
+        const auto             buffer      = bitmap.buffer;
 
         while(row_index != bitmap.rows) {
 
@@ -81,7 +84,7 @@ utopia::client::render::Bitmap
         size_t     row_base  = 0;
         const auto rate      = bitmap.pitch;
         const auto num_grays = bitmap.num_grays;
-        auto       buffer    = bitmap.buffer;
+        const auto buffer    = bitmap.buffer;
 
         for(size_t row_index = 0; row_index != bitmap.rows;
             row_index++, row_base += rate) {
@@ -118,17 +121,17 @@ utopia::client::render::Bitmap
 utopia::client::render::text::GlyphInformation
     utopia::client::render::text::Renderer::get_info(uint32_t id) {
 
-    auto face_shared = this->face_->get_ft_face();
-    auto face_ptr    = face_shared.get();
-    auto face        = *face_ptr;
-    auto glyph       = face->glyph;
+    const auto face_shared = this->face_->get_ft_face();
+    const auto face_ptr    = face_shared.get();
+    const auto face        = *face_ptr;
+    const auto glyph       = face->glyph;
 
-    auto err         = FT_Load_Glyph(face, id, FT_LOAD_COLOR);
+    const auto err         = FT_Load_Glyph(face, id, FT_LOAD_COLOR);
 
     check_freetype_error(err);
 
     utopia::client::render::text::GlyphInformation info{};
-    auto                                           metrics = glyph->metrics;
+    const auto                                     metrics = glyph->metrics;
     info.height       = static_cast<int64_t>(metrics.height / 26.6);
     info.width        = static_cast<int64_t>(metrics.width / 26.6);
     info.horiAdvance  = static_cast<int64_t>(metrics.horiAdvance / 26.6);

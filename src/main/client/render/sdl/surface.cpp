@@ -14,7 +14,7 @@
 #include <utopia/client/render/sdl/surface.hpp>
 
 
-void utopia::client::render::sdl::Surface::set_from_bitmap(Bitmap &bitmap) {
+void utopia::client::render::sdl::Surface::set_from_bitmap(const Bitmap &bitmap) {
     if(bitmap.get_x_size() != static_cast<uint64_t>(this->handle_->w) ||
        bitmap.get_y_size() != static_cast<uint64_t>(this->handle_->h)) {
         throw SdlException{ "from utopia:bitmap size not match" };
@@ -45,10 +45,10 @@ void utopia::client::render::sdl::Surface::set_from_bitmap(Bitmap &bitmap) {
                                      bit.green,
                                      bit.blue,
                                      bit.alpha);
-            uint8_t *base_index =
+            auto    *base_index =
                 reinterpret_cast<uint8_t *>(&buffer[y_base + x_base]);
-            uint16_t *buffer2 = reinterpret_cast<uint16_t *>(base_index);
-            uint32_t *buffer4 = reinterpret_cast<uint32_t *>(base_index);
+            auto *buffer2 = reinterpret_cast<uint16_t *>(base_index);
+            auto *buffer4 = reinterpret_cast<uint32_t *>(base_index);
 
             switch(bpp) {
                 case 1:

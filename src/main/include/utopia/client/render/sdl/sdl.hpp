@@ -8,6 +8,7 @@
 /// \file
 /// 引入所有utopia/client/render/sdl下的头文件
 //===--------------------------------------------------------===//
+#pragma once
 
 #include <utopia/client/render/sdl/error.hpp>
 #include <utopia/client/render/sdl/window.hpp>

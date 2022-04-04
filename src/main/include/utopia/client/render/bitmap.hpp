@@ -19,9 +19,10 @@
 #include <cstdint>
 #include <iostream>
 #include <span>
-#include <string>
 #include <sstream>
+#include <string>
 
+#include <utopia/client/render/defines.hpp>
 #include <utopia/core/exception.hpp>
 
 namespace utopia::client::render {
@@ -42,8 +43,8 @@ namespace utopia::client::render {
         BitmapBit **data_{ nullptr };
 
         // 大小
-        uint64_t x_size_{ 0 };
-        uint64_t y_size_{ 0 };
+        pos_t x_size_{ 0 };
+        pos_t y_size_{ 0 };
 
       public:
 
@@ -51,8 +52,7 @@ namespace utopia::client::render {
         /// @param x_size x轴大小
         /// @param y_size y轴大小
         /// @exception
-        Bitmap(uint64_t x_size, uint64_t y_size) :
-            x_size_(x_size), y_size_(y_size) {
+        Bitmap(pos_t x_size, pos_t y_size) : x_size_(x_size), y_size_(y_size) {
 
             if(x_size == 0) {
                 throw utopia::core::IllegalArgumentException{
@@ -68,10 +68,10 @@ namespace utopia::client::render {
 
             data_ = new BitmapBit *[y_size];
 
-            for(uint64_t ptr = 0; ptr != y_size; ptr++) {
+            for(pos_t ptr = 0; ptr != y_size; ptr++) {
                 data_[ptr] = new BitmapBit[x_size];
 
-                for(uint64_t x_ptr = 0; x_ptr != x_size; x_ptr++) {
+                for(pos_t x_ptr = 0; x_ptr != x_size; x_ptr++) {
                     data_[ptr][x_ptr] = BitmapBit{};
                 }
             }
@@ -81,7 +81,7 @@ namespace utopia::client::render {
         // 允许复制和移动
         ~Bitmap() {
             if(data_ != nullptr) {
-                for(uint64_t ptr = 0; ptr != y_size_; ptr++) {
+                for(pos_t ptr = 0; ptr != y_size_; ptr++) {
                     delete[] data_[ptr];
                 }
                 delete[] data_;
@@ -128,12 +128,12 @@ namespace utopia::client::render {
         }
 
         /// @brief 获取位图x轴大小
-        inline uint64_t get_x_size() const noexcept {
+        inline pos_t get_x_size() const noexcept {
             return this->x_size_;
         }
 
         /// @brief 获取位图y轴大小
-        inline uint64_t get_y_size() const noexcept {
+        inline pos_t get_y_size() const noexcept {
             return this->y_size_;
         }
 
@@ -155,7 +155,7 @@ namespace utopia::client::render {
         /// @param y y轴
         /// @note 坐标位置自0开始，如同数组下标
         /// @return 位图点。如果坐标超出范围则抛出OutOfRangeException
-        inline BitmapBit get_point(uint64_t x, uint64_t y) const {
+        inline BitmapBit get_point(pos_t x, pos_t y) const {
             if(!is_in_range(x, y)) {
                 throw utopia::core::OutOfRangeException{
                     "position out of range of bitmap"
@@ -168,8 +168,7 @@ namespace utopia::client::render {
         /// @brief 在指定坐标写入点
         /// @note 坐标位置自0开始，如同数组下标
         /// @exception OutOfRangeException 如果坐标超出范围则抛出
-        inline void
-            write_point(uint64_t x, uint64_t y, const BitmapBit &point) {
+        inline void write_point(pos_t x, pos_t y, const BitmapBit &point) {
             if(!is_in_range(x, y)) {
                 throw utopia::core::OutOfRangeException{
                     "position out of range of bitmap"
@@ -182,7 +181,7 @@ namespace utopia::client::render {
         /// @brief 清空位图并重新设置位图大小
         /// @param x_size x轴大小
         /// @param y_size y轴大小
-        inline void clear_and_resize(uint64_t x_size, uint64_t y_size) {
+        inline void clear_and_resize(pos_t x_size, pos_t y_size) {
             this->~Bitmap();
             *this = Bitmap{ x_size, y_size };
         }
@@ -194,16 +193,15 @@ namespace utopia::client::render {
          * @param target_y 开始写入的目标位置
          * @note 如果开始写入的目标位置超出目标位图大小，则抛出异常。在写入过程中超出除外。
         */
-        inline void
-            copy_into(Bitmap &target, uint64_t target_x, uint64_t target_y) {
+        inline void copy_into(Bitmap &target, pos_t target_x, pos_t target_y) {
             if(!target.is_in_range(target_x, target_y)) {
                 throw utopia::core::OutOfRangeException{
                     "target position out of range of bitmap"
                 };
             }
 
-            for(uint64_t x = 0; x != get_x_size(); x++) {
-                for(uint64_t y = 0; y != get_y_size(); y++) {
+            for(pos_t x = 0; x != get_x_size(); x++) {
+                for(pos_t y = 0; y != get_y_size(); y++) {
                     if(target.is_in_range(x + target_x, y + target_y)) {
                         target.write_point(x + target_x,
                                            y + target_y,
@@ -218,16 +216,16 @@ namespace utopia::client::render {
      * @param c 占位字符
      * @return 写后的字符串
     */
-    [[nodiscard]] inline std::string write_bitmap_as_chars(Bitmap &bitmap,
-                                      char          c      = '*') {
+    [[nodiscard]] inline std::string write_bitmap_as_chars(const Bitmap &bitmap,
+                                                           char c = '*') {
         std::ostringstream os{};
 
-        for(uint64_t y = 0; y != bitmap.get_y_size(); y++) {
-            for(uint64_t x = 0; x != bitmap.get_x_size(); x++) {
+        for(pos_t y = 0; y != bitmap.get_y_size(); y++) {
+            for(pos_t x = 0; x != bitmap.get_x_size(); x++) {
                 auto color = bitmap.get_point(x, y);
                 os << "\033[38;2;" << std::to_string(color.red) << ";"
-                       << std::to_string(color.green) << ";"
-                       << std::to_string(color.blue) << "m" << c;
+                   << std::to_string(color.green) << ";"
+                   << std::to_string(color.blue) << "m" << c;
             }
             os << "\n";
         }
